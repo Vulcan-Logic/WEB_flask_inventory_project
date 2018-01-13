@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Products</title>
+    <link rel="stylesheet" 
+    		href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" 
+    		href="/static/css/Navigation-with-Button1.css">
+    <link rel="stylesheet" 
+    		href="/static/css/styles.css">
+</head>
+
+<body onLoad="pageLoadAction()">
+    <div>
+        <nav class="navbar navbar-default navigation-clean-button">
+            <div class="container">
+                <div class="navbar-header">
+                	<a class="navbar-brand" href="#">
+                		Company Name
+                	</a>
+                	<button class="navbar-toggle collapsed" 
+                			data-toggle="collapse" 
+                			data-target="#navcol-1">
+                		<span class="sr-only">
+                		Toggle navigation
+                		</span>
+                		<span class="icon-bar">
+                		</span>
+                		<span class="icon-bar">
+                		</span>
+                		<span class="icon-bar">
+                		</span>
+                	</button>
+                </div>
+                <div
+                    class="collapse navbar-collapse" id="navcol-1">
+                    <ul class="nav navbar-nav">
+                        <li class="active" role="presentation">
+	                        <a href="#">
+	                       	First Item
+	                        </a>
+                        </li>
+                        <li role="presentation">
+                        	<a href="#">
+                        	Second Item
+                        	</a>
+                        </li>
+                        <li class="dropdown">
+                        	<a class="dropdown-toggle" 
+                        		data-toggle="dropdown" 
+                        		aria-expanded="false" 
+                        		href="#">
+                            Dropdown
+                        		<span class="caret">
+                        		</span>
+                        	</a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li role="presentation">
+                                	<a href="#">
+                                	First Item
+                                	</a>
+                                </li>
+                                <li role="presentation">
+                                	<a href="#">
+                                	Second Item
+                                	</a>
+                                </li>
+                                <li role="presentation">
+	                                <a href="#">
+	                                Third Item
+	                                </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <p class="navbar-text navbar-right actions">
+	                    <a class="navbar-link login" href="#">
+	                    Log In
+	                    </a> 
+	                    <a class="btn btn-default action-button" 
+	                    	role="button" href="#">
+	                    Sign Up
+	                    </a>
+                    </p>
+            	</div>
+    		</div>
+    	</nav>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12" style="height:40px;">
+                <h4 class="text-center" style="margin:12px 0px;">
+                Add a product
+                </h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2" style="height:40px;">
+                <h5 style="margin:12px 0px;">
+                Current Category
+                </h5>
+            </div>
+            <div class="col-md-1" style="height:40px;" id="noneLabel">
+                <p style="margin:9px 0px;">
+                NONE 
+                </p>
+            </div>
+            <div class="col-md-7" style="height:40px;" 
+            	 id="bcDiv" 
+            	 hidden="true">
+               <ol class="breadcrumb" id="typeBC">
+               </ol>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3" style="height:40px;">
+                <h5 style="margin:12px 0px;">
+                Category: Add/Choose Sub-Type
+                </h5>
+            </div>
+            <div class="col-md-6" style="height:40px;" id="divSel">
+            	<select name="typeSelector"
+	                    		id="typeSelector"
+	                    		onChange="typeSelectorAction()">
+	            	<option value="0" data-value="0" data-value2=0"
+	                        selected>
+	                None Selected
+	                </option>
+	                <option value="1" data-value="1" data-value2="0">
+	                Add New Category/Type
+	                </option>
+{% if cont %}
+  	{% for pItem in sData %}
+					<option value="{{pItem.key.id()}}" 
+							data-value="{{pItem.typeCode.strip()}}"
+							data-value2="{{pItem.level}}">
+					{{pItem.typeDefinition.strip()}}
+					</option>
+	{% endfor %}
+{% endif %}
+				</select>
+            </div>
+            <div class="col-md-3">
+                 	<button class="btn btn-default" type="button"
+                        	id="startOverButton"
+                        	onClick="startOverAction()" disabled>
+                   	Start Over
+                  	</button>
+            </div>
+        </div>
+         <div class="row" id="selMsgDiv">
+			<p id="typeSelectMessage"> </p>    
+         </div>
+    </div>
+    <div class="container" id="addTypeForm">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 id="typeAddDivMessage">
+                Add a Type or Sub Type
+                </h4>
+            </div>
+        </div>
+        <form>
+            <div class="row" style="margin:5px -15px 5px -15px;">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <div class="col-md-2">
+	                        <label class="control-label" 
+	                        style="padding:5px 0px 0px 0px;">
+	                        Type Description:
+	                        </label>
+                        </div>
+                        <div class="col-md-7">
+                        <input class="form-control" 
+                        		type="text" 
+                        		required="true"
+                        		name="typeDescription"
+                        		id="typeDescription" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" 
+            	style="margin:5px -15px 5px 10px;" 
+                 hidden="true" id="divDes">
+                 <div class="col-md-12">
+	                 <div class="col-md-2">
+	                 </div>
+	                 <div class="col-md-7">
+	                            <p id="divdescMsg">
+	                            </p>
+	                 </div>
+	         	</div>
+            </div>    
+            <div class="row" style="margin:5px -15px 5px -15px;">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <div class="col-md-2">
+	                        <label class="control-label" 
+	                        		style="padding:5px 0px 0px 0px;">
+	                        Type Code:
+	                        </label>
+                        </div>
+                        <div class="col-md-2">
+	                        <input class="form-control" 
+	                        		type="text" 
+	                        		required="true" 
+	                        		maxlength="3" 
+	                        		minlength="3" 
+	                        		style="width:80px;"
+	                        		name="typeCode"
+	                        		id="typeCode" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" 
+            	style="margin:5px -15px 5px 10px;" hidden 
+                 id="divCode">
+                 <div class="col-md-12">
+	                 <div class="col-md-2">
+	                 </div>
+	                 <div class="col-md-7">
+	                            <p id="divCodeMsg">
+	                            </p>
+	                 </div>
+	         	</div>
+            </div>    
+            <div class="row" style="margin:5px -15px 5px -15px;">
+	            <div class ="row" id="divTypeMsg" hidden="true">
+	                <div class="col-md-12">
+	                    <div class="form-group">
+	                        <div class="col-md-12">
+	                            <p style="padding:5px 0px 0px 5px;"
+	                            id="divTypeMsg">
+	                            </p>
+	                        </div>
+	                    </div>
+	                </div>
+	            </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <div class="col-md-6">
+                        	<button class="btn btn-default" type="submit"
+                        	id="submitAddTypeFormButton"
+                        	onClick="submitAddTypeAct()">
+                        	Add Type
+                        	</button>
+                        </div>
+                        <div class="col-md-2" style="height:40px;">
+            				<button class="btn btn-default" type="button" 
+                    			style="height:30px;font-size:14px;
+                    				   margin:3px 0px;"
+                    			id="cancelNewTypeButon"
+                    			onClick="cancelNewTypeButtonAction()">
+                    		Cancel 
+                    		</button>
+            </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="testBlock">
+    	<p id="testMessage"> </p>
+    </div>
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/static/js/addType.js"></script>
+</body>
+
+</html>

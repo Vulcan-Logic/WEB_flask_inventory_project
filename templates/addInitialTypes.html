@@ -1,0 +1,30 @@
+
+
+{# [START form] #}
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<h3>Add Root Type </h3>
+
+<form method="POST" enctype="multipart/form-data">
+  
+   <div class="form-group">
+    <label for="Desc">Description</label>
+    <input type="text" name="Desc" id="Desc" value="" 
+    	class="form-control"/>
+  </div>
+  
+  <div class="form-group">
+    <label for="Code">Code</label>
+    <input type="text" name="Code" id="Code" value="" 
+    	class="form-control"/>
+  </div>
+ 
+  <button type="submit" class="btn btn-success">Save</button>
+</form>
+
+{% endblock %}
+
+{# [END form] #}
