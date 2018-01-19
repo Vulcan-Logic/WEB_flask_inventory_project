@@ -162,8 +162,11 @@ function typeSelectorAction(){
 			     //get the type List from the server
 			    	var dataFrmSvr = JSON.parse(this.responseText);
 			    	if (dataFrmSvr.count==0){
+			    		console.log("0 records returned");
 			    		var typeListFrmSvr=[];
 			    	} else {
+			    		console.log("records returned");
+			    		console.log(dataFrmSvr.count);
 			    		var typeListFrmSvr=JSON.parse(dataFrmSvr.list);
 			    		var typeListArrayEntry={parentID:selectedId,
 			    					level:typeListFrmSvr[0].level,

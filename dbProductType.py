@@ -57,6 +57,8 @@ class TypeQuery():
             query=ProductType().query(ancestor=parentKey).order(
                                                 ProductType.dateModified)
             returnList=[]
+            print("in get Types by parent")
+            print(query.count())
             if query.count()>0:
                 results=query.fetch()
                 for result in results:

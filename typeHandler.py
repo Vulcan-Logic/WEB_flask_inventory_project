@@ -102,12 +102,13 @@ class getTypeList(Handler1):
         keyUrl=self.request.get('kId')
         types=TypeQuery().getTypesByParent(parentKey=keyUrl)
         if types is not None:
-            if types==0:
-                retCount=0
-                retString=("")
-            else:
-                retCount=len(types)
-                retString=json.dumps(types) 
+            retCount=len(types)
+            print("in getTypeList: ListCount")
+            print(retCount)
+            if retCount!=0:
+                retString=json.dumps(types)
+            else: 
+                retString="" 
             retList=json.dumps({"count":retCount,"list":retString})  
             self.response.out.headers['Content-Type'] = 'text/json'
             self.response.status_int = 200
@@ -123,7 +124,6 @@ def filter_results(qry):
     Send NDB query result to serialize function if single result, 
     else loop through the query result and serialize records one by one
     """
-
     result = []
 
     # check if qry is a list (multiple records) or not (single record)
