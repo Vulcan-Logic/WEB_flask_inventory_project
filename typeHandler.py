@@ -27,32 +27,35 @@ class getStarterTypes(Handler1):
     
 class insertType(Handler1): 
     def post(self):
-        parentId=self.request.get("parentId")
+        parentKey=self.request.get("parentId")
         typeDesc=self.request.get("Desc")
         typeCode=self.request.get("Code")
-        parentId=int(parentId)
-        print('parent id is ')
-        print(parentId)
-        if parentId!=0:
+        print('in adding items parent id is ')
+        print(parentKey)
+        print("Desc")
+        print(typeDesc)
+        print("Code")
+        print(typeCode)
+        if parentKey!="0":
                 returnVal=TypeQuery().addType(typeCode=typeCode,
                                    typeDefinition=typeDesc,
-                                   parentId=parentId)
+                                   parentKey=parentKey)
         else:
                 returnVal=TypeQuery().addType(typeCode=typeCode,
                                    typeDefinition=typeDesc)
         if returnVal is not None:
-            types=TypeQuery().getTypesByParentId(parentId=parentId)
-            if types is not None:
-                if types==0:
-                    retCount=0
-                    retString=("")
-                else:
-                    retCount=len(types)
-                    retString=json.dumps(types) 
-                retList=json.dumps({"count":retCount,"list":retString})  
-                self.response.out.headers['Content-Type'] = 'text/json'
-                self.response.status_int = 201
-                self.response.out.write(retList)
+            types=TypeQuery().getTypesByParent(parentKey=parentKey)            
+            retCount=len(types)
+            print("in insertType returning list with added entry")
+            print(retCount)
+            if retCount!=0:
+                retString=json.dumps(types)
+            else: 
+                retString="" 
+            retList=json.dumps({"count":retCount,"list":retString})  
+            self.response.out.headers['Content-Type'] = 'text/json'
+            self.response.status_int = 200
+            self.response.out.write(retList)
         else:
             self.response.headers['Content-Type'] = 'application/text'
             self.response.status_int = 500

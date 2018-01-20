@@ -8,8 +8,8 @@ class addProductsHandler(Handler1):
 		self.display()
 			
 	def display(self,user=""):
-		sData=TypeQuery().getTypesByParentId(0)
-		if (sData is not None) or (sData != 0):
+		sData=TypeQuery().getTypesByParent("0")
+		if (sData is not None and len(sData)!=0):
 			self.render("ap.html",sData=sData,cont=True)
 		else:
 			self.render("ap.html",cont=False)

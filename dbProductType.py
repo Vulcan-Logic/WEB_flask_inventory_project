@@ -18,14 +18,17 @@ class ProductType(ndb.Model):
     
 class TypeQuery():
     
-    def addType(self,typeCode,typeDefinition,parentId=None):
-        if parentId is not None:
-            parentId=int(parentId)
-            parentType=self.getTypeById(parentId)
-            print("in addType")
+    def addType(self,typeCode,typeDefinition,parentKey=None):
+        if parentKey is not None:
+            if parentKey=="0":
+                parentKey=ndb.Key('ProductType',"0")
+            else:
+                parentKey=ndb.Key(urlsafe=parentKey)
+            parentType=self.getTypeByKey(parentKey)
+            print("in addType parent type is:")
             print(parentType)
             if parentType is not None:
-                parentKey=ndb.Key('ProductType',parentId)
+                print("adding type")
                 typeEntry=ProductType(typeCode = typeCode.upper(), 
                                     counter = 0,
                                     level = parentType.level+1, 
@@ -54,21 +57,21 @@ class TypeQuery():
                 parentKey=ndb.Key('ProductType',"0")
             else:
                 parentKey=ndb.Key(urlsafe=parentKey)
+                print(parentKey)
             query=ProductType().query(ancestor=parentKey).order(
-                                                ProductType.dateModified)
+                                               ProductType.dateModified)    
             returnList=[]
-            print("in get Types by parent")
-            print(query.count())
             if query.count()>0:
                 results=query.fetch()
                 for result in results:
-                    listElement={ 
-                                 'key': result.key.urlsafe(),
-                                 'typeCode': result.typeCode,
-                                 'typeDefinition':result.typeDefinition,
-                                 'level':result.level
-                        }
-                    returnList.append(listElement)
+                    if parentKey.urlsafe()!=result.key.urlsafe():
+                        listElement={ 
+                                     'key': result.key.urlsafe(),
+                                     'typeCode': result.typeCode,
+                                     'typeDefinition':result.typeDefinition,
+                                     'level':result.level
+                            }
+                        returnList.append(listElement)
             return(returnList)
         else:            
             return(None)
@@ -126,24 +129,35 @@ class TypeQuery():
                 return(False)
 
     
-    def getTypeById(self,typeId=None):
-        if typeId is not None:
-            print(typeId)
-            key=ndb.Key('ProductType',typeId)
-            print(key)
-            print(key.kind())
-            print(key.id())
-            print(key.urlsafe())
-            print("trying to get entity")
-            print(key.get())
-            type=key.get()
-            return(key.get())
-        
     def getTypeByKey(self,key=None):
         if key is not None:
             return(key.get())
-   
-   
+    
+    def getTypesByParentKeyNLevel(self,key=None,level=0):
+        #key in url safe mode, level int 
+        if key is not None: 
+            parentKey=ndb.Key(urlsafe=key)
+        else:
+            parentKey=ndb.Key('ProductType',"0")
+        query=ProductType().query(ProductType.level==level, 
+                                  ancestor=parentKey).order(
+                                               ProductType.dateModified)    
+        returnList=[]
+        if query.count()>0:
+            results=query.fetch()
+            for result in results:
+                if parentKey.urlsafe()!=result.key.urlsafe():
+                    listElement={ 
+                                'key': result.key.urlsafe(),
+                                'typeCode': result.typeCode,
+                                'typeDefinition':result.typeDefinition,
+                                'level':result.level
+                    }
+                returnList.append(listElement)
+            return(returnList)
+        else:            
+            return(None)
+                 
    
 def filter_results(qry):
     """

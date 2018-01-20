@@ -388,8 +388,13 @@ function postForAddProduct(selectedId,newDesc,newCode){
     // all ok proceed to send request to post new value
 	//need to change the next section
 	var xhttp = new XMLHttpRequest();
-	var requestString="parentId="+selectedId+"&Desc="+newDesc.value.trim()+
-	      +"&Code="+newCode.value.trim();
+	var requestString="parentId=";
+	requestString=requestString.concat(selectedId);
+	requestString=requestString.concat("&Desc=");
+	requestString=requestString.concat(newDesc.value.trim());
+	requestString=requestString.concat("&Code=");
+	requestString=requestString.concat(newCode.value.trim());
+	console.log("request string is " + requestString);
 	xhttp.open("POST", "insertType", true);
 	xhttp.onreadystatechange =  function(){
 		if (this.readyState == 4 && this.status == 200){
