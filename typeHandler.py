@@ -103,7 +103,7 @@ class getTypeList(Handler1):
     def get(self):
         #return json 
         keyUrl=self.request.get('kId')
-        types=TypeQuery().getTypesByParent(parentKey=keyUrl)
+        types=TypeQuery().getChildTypesByKey(key=keyUrl)
         if types is not None:
             retCount=len(types)
             print("in getTypeList: ListCount")

@@ -133,16 +133,20 @@ class TypeQuery():
         if key is not None:
             return(key.get())
     
-    def getTypesByParentKeyNLevel(self,key=None,level=0):
+    def getChildTypesByKey(self,key=None,level=0):
         #key in url safe mode, level int 
         if key is not None: 
             parentKey=ndb.Key(urlsafe=key)
+            typ=self.getTypeByKey(parentKey)
+            level=typ.level+1
         else:
             parentKey=ndb.Key('ProductType',"0")
         query=ProductType().query(ProductType.level==level, 
                                   ancestor=parentKey).order(
                                                ProductType.dateModified)    
         returnList=[]
+        print("in get child types")
+        print(query.count())
         if query.count()>0:
             results=query.fetch()
             for result in results:
@@ -154,9 +158,7 @@ class TypeQuery():
                                 'level':result.level
                     }
                 returnList.append(listElement)
-            return(returnList)
-        else:            
-            return(None)
+        return(returnList)
                  
    
 def filter_results(qry):
