@@ -168,7 +168,7 @@ function typeSelectorAction(){
 			    		console.log("records returned");
 			    		console.log(dataFrmSvr.count);
 			    		var typeListFrmSvr=JSON.parse(dataFrmSvr.list);
-			    		var typeListArrayEntry={parentID:selectedId,
+			    		var typeListArrayEntry={ParentId:selectedId,
 			    					level:typeListFrmSvr[0].level,
 		    		              	typeList:typeListFrmSvr};
 					   	typeListArray.push(typeListArrayEntry);
@@ -203,50 +203,21 @@ function startOverAction(){
 	loadSelectTypes(typeListArray[0].typeList);
 }
 
-function setBCArray(selectedId,selectedText){
-	var level=-1;
-	for (ctr in typeListArray){
-		var typeList=typeListArray[ctr].typeList;
-		for (ctr2 in typeList){
-			if (Number(typeList[ctr2].key)==Number(selectedId)){
-			level=typeListArray[ctr].level;
-			}	
-		}
-	}
-	var newBCArray=[];
+function setBCArray(selectedId, selectedText){
 	var bcIndex=typeBCArray.length;
-	if ((level==bcIndex) || (bcIndex==0)){
-		var bcEntry = 
-		    {
-				index:bcIndex,
-				sId:selectedType.typeId,
-				sTxt:selectedType.typeDesc,
-				sCode:selectedType.typeCode
-			};
-		typeBCArray.push(bcEntry);
-	}
-	else {
-		if (level<bcIndex){
-			for (ctr=0; ctr<=level; ctr++){
-				if (ctr==level){
-					var bcEntry = 
-				    {
-						index:bcIndex,
-						sId:selectedType.typeId,
-						sTxt:selectedType.typeDesc,
-						sCode:selectedType.typeCode
-					};
-					newBCArray.push(bcEntry);
-				}
-				else{
-					newBCArray.push(typeBCArray[ctr]);
-				}
-			}
-			typeBCArray=newBCArray;
-			}
-	}
+	var bcEntry = 
+    {
+		index:bcIndex,
+		sId:selectedType.typeId,
+		sTxt:selectedType.typeDesc,
+		sCode:selectedType.typeCode
+	};
+	typeBCArray.push(bcEntry);
 	showBC();
 }
+
+
+
 
 function resetBC(){
 	typeBCArray=[];
@@ -352,16 +323,21 @@ function showBC(){
 
 function typeBCAction(sIndex){
 	//reset the array
+	console.log("pressed Index is");
+	console.log(sIndex);
 	var BCArray=typeBCArray.slice(0,sIndex+1);
 	selectedId=BCArray[sIndex].sId;
+	console.log("selected Id is ");
+	console.log(selectedId);
 	selectedType = 
 	{
 		typeId:BCArray[sIndex].sId,
 		typeDesc:BCArray[sIndex].sTxt,
 		typeCode:BCArray[sIndex].sCode
 	};
+	console.log(selectedType.typeDesc);
 	//remove the extra crumbs
-	for(ctr=sIndex+1; ctr<=typeButtonArray.length-1;ctr++){
+	for(ctr=sIndex+1; ctr<=typeBCArray.length-1;ctr++){
 		var parent = document.getElementById("typeBC");
 		var child = document.getElementById("typeCrumb"+ctr);
 		parent.removeChild(child);
@@ -371,12 +347,18 @@ function typeBCAction(sIndex){
 	
 	//reload the list
 	for (ctr in typeListArray){
-		if (typeListArray[ctr].parentId==selectedId){
+		console.log("loop")
+		console.log(ctr);
+		console.log(typeListArray[ctr].ParentId);
+		console.log(selectedId);
+		if (typeListArray[ctr].ParentId==selectedId){
 			typeList = typeListArray[ctr].typeList;
+			console.log(typeList[0]);
 		    //remove entries from the current select
 		    removeSelectEntries();
 		    //add new sub type entries to the current select 
 		    loadSelectTypes(typeList);
+		    break;
 		}
 	}
 }
@@ -412,7 +394,7 @@ function postForAddProduct(selectedId,newDesc,newCode){
 			}
 			//parentID does not exist in typeListArray, add a new entry
 			if (notFound){
-				var typeListArrayEntry={parentID:selectedId,
+				var typeListArrayEntry={ParentID:selectedId,
     					level:typeListFrmSvr[0].level,
 		              	typeList:typeListFrmSvr};
 				typeListArray.push(typeListArrayEntry);
@@ -601,4 +583,50 @@ function checkCode(){
 			codeMsg.style.display="none";
 		}
 	}
+}
+
+
+function setBCArray1(selectedId,selectedText){
+	var level=-1;
+	for (ctr in typeListArray){
+		var typeList=typeListArray[ctr].typeList;
+		for (ctr2 in typeList){
+			if (Number(typeList[ctr2].key)==Number(selectedId)){
+			level=typeListArray[ctr].level;
+			}	
+		}
+	}
+	var newBCArray=[];
+	var bcIndex=typeBCArray.length;
+	if ((level==bcIndex) || (bcIndex==0)){
+		var bcEntry = 
+		    {
+				index:bcIndex,
+				sId:selectedType.typeId,
+				sTxt:selectedType.typeDesc,
+				sCode:selectedType.typeCode
+			};
+		typeBCArray.push(bcEntry);
+	}
+	else {
+		if (level<bcIndex){
+			for (ctr=0; ctr<=level; ctr++){
+				if (ctr==level){
+					var bcEntry = 
+				    {
+						index:bcIndex,
+						sId:selectedType.typeId,
+						sTxt:selectedType.typeDesc,
+						sCode:selectedType.typeCode
+					};
+					newBCArray.push(bcEntry);
+				}
+				else{
+					newBCArray.push(typeBCArray[ctr]);
+				}
+			}
+			typeBCArray=newBCArray;
+			}
+	}
+	showBC();
 }
