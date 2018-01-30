@@ -216,9 +216,6 @@ function setBCArray(selectedId, selectedText){
 	showBC();
 }
 
-
-
-
 function resetBC(){
 	typeBCArray=[];
 	//remove old breadcrumbs
