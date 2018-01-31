@@ -306,8 +306,7 @@
 		        <div class="col-md-2">
 		            <button class="btn btn-default" 
 	                		type="button"
-	                		id = "skuButton" 
-	                		style="padding:6px 12px;margin:25px 0px;">
+	                		id = "skuButton">
 	                	Change SKU
 	                </button>	            
 		        </div>    
@@ -326,7 +325,7 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row attrRow">
             	<div class="form-group">
 	                <div class="col-md-2">
 		  	      		<label class="control-label">
@@ -336,7 +335,7 @@
 					<div class="col-md-4">
 		     	    	<div class="input-group">
 			    	    	<input class="form-control" type="text"
-			    	    	       id="1attrDesc">
+			    	    	       id="1attrDesc" value="Weight" disabled>
 		            		    <div class="input-group-btn">
 		                    	    <button class="btn btn-default" 
 		                    	    type="button" 
@@ -358,7 +357,7 @@
             	</div>
        		</div>
     
-            <div class="row">
+            <div class="row attrRow">
             	<div class="form-group">
 	                <div class="col-md-2">
 		  	      		<label class="control-label">
@@ -368,7 +367,8 @@
 					<div class="col-md-4">
 		     	    	<div class="input-group">
 			    	    	<input class="form-control" type="text"
-			    	    	       id="2attrDesc">
+			    	    	       id="2attrDesc"
+			    	    	       value="Length(cm)" disabled>
 		            		    <div class="input-group-btn">
 		                    	    <button class="btn btn-default" 
 		                    	    type="button" 
@@ -390,7 +390,7 @@
             	</div>
        		</div>
     
-            <div class="row">
+            <div class="row attrRow">
             	<div class="form-group">
 	                <div class="col-md-2">
 		  	      		<label class="control-label">
@@ -400,7 +400,8 @@
 					<div class="col-md-4">
 		     	    	<div class="input-group">
 			    	    	<input class="form-control" type="text"
-			    	    	       id="3attrDesc">
+			    	    	       id="3attrDesc"
+			    	    	       value="Depth(cm)" disabled>
 		            		    <div class="input-group-btn">
 		                    	    <button class="btn btn-default" 
 		                    	    type="button" 
@@ -422,7 +423,7 @@
             	</div>
        		</div>
 
-            <div class="row">
+            <div class="row attrRow">
             	<div class="form-group">
 	                <div class="col-md-2">
 		  	      		<label class="control-label">
@@ -432,7 +433,8 @@
 					<div class="col-md-4">
 		     	    	<div class="input-group">
 			    	    	<input class="form-control" type="text"
-			    	    	       id="4attrDesc">
+			    	    	       id="4attrDesc"
+			    	    	       value="Height(cm)" disabled>
 		            		    <div class="input-group-btn">
 		                    	    <button class="btn btn-default" 
 		                    	    type="button" 
@@ -454,135 +456,28 @@
             	</div>
        		</div>
            
-            <div class="row">
-            	<div class="form-group">
-	                <div class="col-md-2">
-		  	      		<label class="control-label">
-			      			5. Attribute Description
-			       		</label>
-					</div>	
-					<div class="col-md-4">
-		     	    	<div class="input-group">
-			    	    	<input class="form-control" type="text"
-			    	    	       id="5attrDesc">
-		            		    <div class="input-group-btn">
-		                    	    <button class="btn btn-default" 
-		                    	    type="button" 
-		                    	    id="5attrDescBtn" 
-		                    	    onClick="attrDescBtnAct(5)">
-		                        		Change
-		                        	</button>
-		                        </div>
-		                </div>
-					</div>
-                	<div class="col-md-1">
-	                   	<label class="control-label">
-		                	Value 
-		                </label>
-	                </div>
-	                <div class="col-md-5">
-	                	<input class="form-control" type="text" id="5attrValue">
-                	</div>
+            <div class="row attrRow">
+            	<div class="col-md-12 text-center">
+            		<button class="btn btn-default" 
+	                		type="button"
+	                		id = "addAttrBtn"
+	                		onClick="addAttrAct()">
+	                	Add another attribute
+	                </button>	
             	</div>
        		</div>
-           
-            <div class="row">
-            	<div class="form-group">
-	                <div class="col-md-2">
-		  	      		<label class="control-label">
-			      			6. Attribute Description
-			       		</label>
-					</div>	
-					<div class="col-md-4">
-		     	    	<div class="input-group">
-			    	    	<input class="form-control" type="text"
-			    	    	       id="6attrDesc">
-		            		    <div class="input-group-btn">
-		                    	    <button class="btn btn-default" 
-		                    	    type="button" 
-		                    	    id="6attrDescBtn" 
-		                    	    onClick="attrDescBtnAct(6)">
-		                        		Change
-		                        	</button>
-		                        </div>
-		                </div>
-					</div>
-                	<div class="col-md-1">
-	                   	<label class="control-label">
-		                	Value 
-		                </label>
-	                </div>
-	                <div class="col-md-5">
-	                	<input class="form-control" type="text" id="6attrValue">
-                	</div>
-            	</div>
+
+			<div class="form-group"  hidden="True">
+				<input class="form-control" type="text"
+			    	    	       id="noAttr"
+			    	    	      
+			    	    	       disabled >
+			</div>
+			          
+            <div id="moreAttr">
        		</div>
  
-             <div class="row">
-            	<div class="form-group">
-	                <div class="col-md-2">
-		  	      		<label class="control-label">
-			      			7. Attribute Description
-			       		</label>
-					</div>	
-					<div class="col-md-4">
-		     	    	<div class="input-group">
-			    	    	<input class="form-control" type="text"
-			    	    	       id="7attrDesc">
-		            		    <div class="input-group-btn">
-		                    	    <button class="btn btn-default" 
-		                    	    type="button" 
-		                    	    id="7attrDescBtn" 
-		                    	    onClick="attrDescBtnAct(7)">
-		                        		Change
-		                        	</button>
-		                        </div>
-		                </div>
-					</div>
-                	<div class="col-md-1">
-	                   	<label class="control-label">
-		                	Value 
-		                </label>
-	                </div>
-	                <div class="col-md-5">
-	                	<input class="form-control" type="text" id="7attrValue">
-                	</div>
-            	</div>
-       		</div>
- 
-             <div class="row">
-            	<div class="form-group">
-	                <div class="col-md-2">
-		  	      		<label class="control-label">
-			      			8. Attribute Description
-			       		</label>
-					</div>	
-					<div class="col-md-4">
-		     	    	<div class="input-group">
-			    	    	<input class="form-control" type="text"
-			    	    	       id="8attrDesc">
-		            		    <div class="input-group-btn">
-		                    	    <button class="btn btn-default" 
-		                    	    type="button" 
-		                    	    id="8attrDescBtn" 
-		                    	    onClick="attrDescBtnAct(8)">
-		                        		Change
-		                        	</button>
-		                        </div>
-		                </div>
-					</div>
-                	<div class="col-md-1">
-	                   	<label class="control-label">
-		                	Value 
-		                </label>
-	                </div>
-	                <div class="col-md-5">
-	                	<input class="form-control" type="text" id="8attrValue">
-                	</div>
-            	</div>
-       		</div>
- 
-            <div class="row">
+            <div class="row imageRow">
                 <div class="col-md-1">
 	                <label id="labelImage">
 	                	Image 

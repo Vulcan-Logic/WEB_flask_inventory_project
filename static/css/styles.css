@@ -26,3 +26,16 @@ input:focus {
 .control-label {
 	margin-top:6px;
 }
+
+.attrRow, .imageRow{
+	margin-top:10px;
+}
+
+#skuButton {
+	margin-top:30px;
+	padding-top:6px;
+	padding-bottom:6px;
+	padding-left:12px; 
+	padding-right:12px;
+}
+
