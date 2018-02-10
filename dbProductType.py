@@ -25,10 +25,7 @@ class TypeQuery():
             else:
                 parentKey=ndb.Key(urlsafe=parentKey)
             parentType=self.getTypeByKey(parentKey)
-            print("in addType parent type is:")
-            print(parentType)
             if parentType is not None:
-                print("adding type")
                 typeEntry=ProductType(typeCode = typeCode.upper(), 
                                     counter = 0,
                                     level = parentType.level+1, 
@@ -57,7 +54,6 @@ class TypeQuery():
                 parentKey=ndb.Key('ProductType',"0")
             else:
                 parentKey=ndb.Key(urlsafe=parentKey)
-                print(parentKey)
             query=ProductType().query(ancestor=parentKey).order(
                                                ProductType.dateModified)    
             returnList=[]
@@ -104,29 +100,54 @@ class TypeQuery():
     
     def checkDesc(self,parentKey=None,desc=None):
         if parentKey is not None and desc is not None:
-            parentKey=ndb.Key(urlsafe=parentKey)
+            if parentKey=="0":
+                parentKey=ndb.Key('ProductType',"0")
+                checkLevel=0
+            else:
+                parentKey=ndb.Key(urlsafe=parentKey)
+                parentType=self.getTypeByKey(parentKey)
+                checkLevel=parentType.level+1
+            print("checking description")
+            print("description is")
+            print(desc)
             query=ProductType().query(
                 ProductType.typeDefinition==desc.upper(),
+                ProductType.level==checkLevel,
                                       ancestor=parentKey)
+            print("query is")
+            print(query)
             if query.count()>0:
-                print("checkDesc")
-                print('true')
-                return(True)
-            else:
-                print("checkDesc")
-                print('false')
+                print("check Desc")
+                print("returned False")
                 return(False)
+            else:
+                return(True)
+        else:
+            return(False)
 
     def checkCode(self,parentKey=None,code=None):
-        if parentKey is not None and code is not None:          
-            parentKey=ndb.Key(urlsafe=parentKey)
+        if parentKey is not None and code is not None:  
+            if parentKey=="0":
+                parentKey=ndb.Key('ProductType',"0")
+                checkLevel=0
+            else:
+                parentKey=ndb.Key(urlsafe=parentKey)        
+                parentType=self.getTypeByKey(parentKey)
+                checkLevel=parentType.level+1
             query=ProductType().query(
                   ProductType.typeCode==code.upper(),
+                  ProductType.level==checkLevel,
                   ancestor=parentKey)
+            print("query is")
+            print(query)
+            print("result count")
+            print(query.count())
             if query.count()>0:
-                return(True)
-            else:
+                print("check Code")
+                print("returned False")
                 return(False)
+            else:
+                return(True)
 
     
     def getTypeByKey(self,key=None):
@@ -145,8 +166,6 @@ class TypeQuery():
                                   ancestor=parentKey).order(
                                                ProductType.dateModified)    
         returnList=[]
-        print("in get child types")
-        print(query.count())
         if query.count()>0:
             results=query.fetch()
             for result in results:

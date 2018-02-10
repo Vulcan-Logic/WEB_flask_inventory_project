@@ -14,7 +14,9 @@
 var typeListArray =[];
 //this has the form = [{Id:0,typeList:Array of sub-types under this type}] 
 var typeBCArray=[];
-var selectedType={typeId:"",typeDesc:"",typeCode:""};
+var selectedType={typeId:"0",typeDesc:"",typeCode:"",typeLevel:0};
+var checkCodeResponse=false;
+var checkDescResponse=false;
 
 function pageLoadAction(){
 	//run first time when page is loaded
@@ -51,7 +53,7 @@ function pageLoadAction(){
 	}
 }
 
-function loadSelectTypes(typeList){
+function loadSelectTypes(main,typeList){
 // create select control	
 	var divSel = document.getElementById("divSel");
 	var select1 = document.createElement("select");
@@ -86,7 +88,12 @@ function loadSelectTypes(typeList){
 	var atr1 = document.createAttribute('data-value2');
 	atr1.value = "1";
 	opt.value = "1";
-	opt.innerHTML = "Add Sub-Type";
+	if (main) {
+		opt.innerHTML = "Add New Category/Type";
+	}
+	else {
+		opt.innerHTML = "Add Sub-Type";
+	}
 	opt.setAttributeNode(atr);
 	opt.setAttributeNode(atr1);
 	select1.appendChild(opt);
@@ -117,10 +124,13 @@ function typeSelectorAction(){
 	var selectedId=selected.value.trim();
 	var selectedText=selected.innerHTML.trim();
 //convert types to ing	
+	console.log("selected Level");
+	console.log(selectedLevel);
 	selectedLevel=Number(selectedLevel);
 //check value of selected type, if it is 1 display the add type form
 	if (selectedId=="1"){
 		addNewTypeAction(selectedLevel);
+		document.getElementById("startOverButton").disabled=false;
 	}
 	//check if selected Id is 0, if so display the none label
 	else if (selectedId=="0") {
@@ -132,10 +142,12 @@ function typeSelectorAction(){
 		{
 			typeId :  selectedId,
 			typeDesc : selectedText,
-			typeCode : selectedCode
+			typeCode : selectedCode,
+			typeLevel: selectedLevel
 		};
 		selectedType=vSelectedType;
 		setBCArray(selectedId,selectedText);
+		document.getElementById("startOverButton").disabled=false;
 		//this loop is to check if the data already exists in local cache
 		var notFound=true;
 		for (ctr in typeListArray){
@@ -144,7 +156,7 @@ function typeSelectorAction(){
 			    //remove entries from the current select
 			    removeSelectEntries();
 			    //add new sub type entries to the current select 
-			    loadSelectTypes(typeList);
+			    loadSelectTypes(false,typeList);
 			    //set focus on the select 
 				notFound=false;
 				currentLevel=typeListArray[ctr].level;
@@ -176,7 +188,7 @@ function typeSelectorAction(){
 			      //remove entries from the current select
 			      removeSelectEntries();
 			      //add new sub type entries to the current select 
-			      loadSelectTypes(typeListFrmSvr);
+			      loadSelectTypes(false,typeListFrmSvr);
 			    } else if (this.readyState == 4 && this.status == 500){
 			    	//to do........
 			    	//display error alert
@@ -199,8 +211,9 @@ function removeSelectEntries(){
 function startOverAction(){
 	resetBC();
 	removeSelectEntries();
-	selectedType={typeId:0,typeDesc:"",typeCode:""};
-	loadSelectTypes(typeListArray[0].typeList);
+	selectedType={typeId:"0",typeDesc:"",typeCode:"",typeLevel:0};
+	loadSelectTypes(true,typeListArray[0].typeList);
+	deactivateAddTypeSection();
 }
 
 function setBCArray(selectedId, selectedText){
@@ -210,7 +223,8 @@ function setBCArray(selectedId, selectedText){
 		index:bcIndex,
 		sId:selectedType.typeId,
 		sTxt:selectedType.typeDesc,
-		sCode:selectedType.typeCode
+		sCode:selectedType.typeCode,
+		sLevel:selectedType.typeLevel
 	};
 	typeBCArray.push(bcEntry);
 	showBC();
@@ -233,9 +247,7 @@ function resetBC(){
 	var att = document.createAttribute('hidden');
 	att.value="true";
 	bcDiv.setAttributeNode(att);
-	var noneLabel = document.getElementById("noneLabel");
-	var attr = noneLabel.getAttributeNode("hidden");
-	noneLabel.removeAttributeNode(attr);
+	document.getElementById("noneLabel").hidden=false;
 	document.getElementById("startOverButton").disabled=true;
 }
 
@@ -272,7 +284,7 @@ function showBC(){
 		noneLabel.setAttributeNode(att);
 		var attr = bcDiv.getAttributeNode("hidden");
 		bcDiv.removeAttributeNode(attr);
-		document.getElementById("startOverButton").disabled=false;
+
 	}
 //remove old breadcrumbs
 	var bcDiv=document.getElementById("bcDiv");
@@ -330,7 +342,8 @@ function typeBCAction(sIndex){
 	{
 		typeId:BCArray[sIndex].sId,
 		typeDesc:BCArray[sIndex].sTxt,
-		typeCode:BCArray[sIndex].sCode
+		typeCode:BCArray[sIndex].sCode,
+		typeLevel:BCArray[sIndex].sLevel
 	};
 	console.log(selectedType.typeDesc);
 	//remove the extra crumbs
@@ -354,18 +367,21 @@ function typeBCAction(sIndex){
 		    //remove entries from the current select
 		    removeSelectEntries();
 		    //add new sub type entries to the current select 
-		    loadSelectTypes(typeList);
+		    loadSelectTypes(false,typeList);
 		    break;
 		}
 	}
 }
   
-function postForAddProduct(selectedId,newDesc,newCode){
+function addTypeAct(){
 	//validate inputs make sure values are not duplicated in main arrays
 	//send an ajax post request to the server
 	//need the parentKey id to
     // all ok proceed to send request to post new value
 	//need to change the next section
+	var selectedId=selectedType.typeId;
+	var newDesc = document.getElementById("typeDescription");
+	var newCode = document.getElementById("typeCode")
 	var xhttp = new XMLHttpRequest();
 	var requestString="parentId=";
 	requestString=requestString.concat(selectedId);
@@ -373,6 +389,7 @@ function postForAddProduct(selectedId,newDesc,newCode){
 	requestString=requestString.concat(newDesc.value.trim());
 	requestString=requestString.concat("&Code=");
 	requestString=requestString.concat(newCode.value.trim());
+	console.log("postForAddType");
 	console.log("request string is " + requestString);
 	xhttp.open("POST", "insertType", true);
 	xhttp.onreadystatechange =  function(){
@@ -399,7 +416,7 @@ function postForAddProduct(selectedId,newDesc,newCode){
 			//remove entries from the current select
 	    	removeSelectEntries();
 	    	//add new sub type entries to the current select 
-	    	loadSelectTypes(typeListFrmSvr);
+	    	loadSelectTypes(false,typeListFrmSvr);
 	    	deactivateAddTypeSection();
 	    	activateSelectSection();
 		}
@@ -413,71 +430,114 @@ function postForAddProduct(selectedId,newDesc,newCode){
 }
 
 function displayError(elm,err){
-	var ele=document.getElementById(elm);
-	var eleMsg=document.getElementById(elm.trim()+"Msg");
-	eleMsg.innerHTML=err;
-	if (!isVisible(ele)){
-		var attr = eleMsg.getAttributeNode("hidden");
-		eleMsg.removeAttributeNode(attr);
+	var divEle=document.getElementById("div"+elm.trim()+"Msg");
+	var pEle=document.getElementById("p"+elm.trim()+"Msg");
+	pEle.innerHTML=err;
+	if (!isVisible(divEle)){
+		divEle.hidden=false;
 	}
 }
 
-function checkField(field,parentId){
-	//error codes
-	//0 OK field value not found in database
-	//-1 field is blank
-	//-2 field value is in database
-	//-3 server error
-	var ele = document.getElementById(field);
-	//check if input is blank
-	if (ele.value.trim().length==0)return(-1);
-	//input is not blank
-	else {
-		if (field=="typeDescription") 
-			var requestString="checkDesc?parentId=" + 
-					parentId + "&desc=" + ele.value.trim();
-		else 
-			var requestString="checkCode?parentId=" + 
-					parentId + "&code=" + ele.value.trim();
-	//not blank send ajax request and check response
+function checkDescAct(){
+	var selectedId=selectedType.typeId;
+	console.log("checkDesc");
+ 	console.log(selectedId);
+	var newDesc = document.getElementById("typeDescription");
+	var submitButton=document.getElementById("submitAddTypeFormButton");
+	newDescValue=newDesc.value.trim();
+	if (newDescValue.length==0){
+		displayError("Desc",
+		"Error: Description can't be blank");
+	 refocus(newDesc);
+	}
+	else{
+		var requestString="checkDesc?parentId=";
+		requestString=requestString.concat(selectedId);
+		requestString=requestString.concat("&Desc=");
+		requestString=requestString.concat(newDescValue);
 		var xhttp = new XMLHttpRequest();
 		xhttp.onreadystatechange = function (){
 			 if (this.readyState == 4 && this.status == 200){
-			    	if (Number(this.responseText)==1) return(-2);	
+				 	var svrResponse= JSON.parse(this.responseText);
+				 	var responseType=svrResponse.response;
+				 	
+				 	if (responseType=="true"){
+						checkDescResponse=true;
+						if (checkCodeResponse) {
+							submitButton.disabled=false;
+						}
+						errorDiv=document.getElementById("divDescMsg");
+						if (isVisible(errorDiv)) {
+							errorDiv.hidden=true;
+						}
+					}
+				 	else if (responseType=="false"){
+						console.log("error: duplicate description");
+						displayError("Desc",
+								"Duplicate Description under this parent type");
+						refocus(newDesc);
+					}
 			 }
-			 else if (this.readyState == 4 && this.status == 500)return(-3);
+			 else if (this.readyState == 4 && this.status == 500){
+				 displayError("Desc",
+					"Server Error: Error checking in server");
+				 refocus(newDesc);
+			 }
 		};
 		xhttp.open("GET",requestString, true);
 		xhttp.send();
 	}
-	console.log("returning 0 from checkField");
-	return(0);
 }
 
-function submitAddTypeAct(){
+function checkCodeAct(){
 	var selectedId=selectedType.typeId;
-	var newDesc = document.getElementById("typeDescription");
 	var newCode = document.getElementById("typeCode");
-	if (checkField("typeDescription",selectedId)==0 &&
-			checkField("typeCode",selectedId)==0){
-		console.log("posting insert request");
-		postForAddProduct(selectedId,newDesc,newCode);	
+	var submitButton=document.getElementById("submitAddTypeFormButton");
+	newCodeValue=newCode.value.trim();
+	if (newCodeValue.length<3){
+		displayError("Code",
+		"Error: Code can't be blank or less than 3 alphanumeric digits");
+	 refocus(newCode);
 	}
-	else if (checkField("typeDescription",selectedId)==-2){
-		console.log("error: duplicate description");
-		displayError("divDesc",
-				"Duplicate Description under this parent type");
-		refocus(newDesc);
-		return(false);
-	}
-	else if (checkField("typeCode",selectedId)==-2) {
-		console.log("error: duplicate code");
-		displayError("divCode", "Duplicate Code under this parent type");
-		refocus("newCode");
-		return(false);
+	else{
+		var requestString="checkCode?parentId=";
+		requestString=requestString.concat(selectedId);
+		requestString=requestString.concat("&Code=");
+		requestString=requestString.concat(newCodeValue);
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function (){
+			 if (this.readyState == 4 && this.status == 200){
+				 	var svrResponse= JSON.parse(this.responseText);
+				 	var responseType=svrResponse.response;
+				 	console.log("checkCode");
+				 	console.log(responseType);
+				 	if (responseType=="true"){
+						checkCodeResponse=true;
+						if (checkDescResponse) {
+							submitButton.disabled=false;
+						}
+						errorDiv=document.getElementById("divCodeMsg");
+						if (isVisible(errorDiv)) {
+							errorDiv.hidden=true;
+						}
+					}
+				 	else if (responseType=="false"){
+						console.log("error: duplicate code");
+						displayError("Code",
+								"Error: Duplicate Code under this parent type");
+						refocus(newCode);
+					}
+			 }
+			 else if (this.readyState == 4 && this.status == 500){
+				 displayError("Code",
+					"Server Error: Error checking in server");
+				 refocus(newCode);
+			 }
+		};
+		xhttp.open("GET",requestString, true);
+		xhttp.send();
 	}
 }
-
 
 function addNewTypeAction(selectedLevel){
 	//deactivate the select control to enable activating the add 
@@ -503,7 +563,6 @@ function activateSelectSection(){
 function deactivateAddTypeSection(){
 	document.getElementById("typeDescription").disabled=true;
 	document.getElementById("typeCode").disabled=true;
-	document.getElementById("submitAddTypeFormButton").disabled=true;
 	document.getElementById("addTypeForm").style.display="none";
 }
 
@@ -515,7 +574,6 @@ function activateAddTypeSection(buttonString){
 	document.getElementById("addTypeForm").style.display="";
 	document.getElementById("typeDescription").disabled=false;
 	document.getElementById("typeCode").disabled=false;
-	document.getElementById("submitAddTypeFormButton").disabled=false;
 }
 
 function isVisible (ele) {

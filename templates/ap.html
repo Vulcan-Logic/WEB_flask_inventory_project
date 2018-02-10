@@ -190,19 +190,20 @@
                         		type="text" 
                         		required="true"
                         		name="typeDescription"
-                        		id="typeDescription" />
+                        		id="typeDescription" 
+                        		onChange=checkDescAct() />
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row" 
             	style="margin:5px -15px 5px 10px;" 
-                 hidden="true" id="divDes">
+                id="divDescMsg" hidden>
                  <div class="col-md-12">
 	                 <div class="col-md-2">
 	                 </div>
-	                 <div class="col-md-7">
-	                            <p id="divdescMsg">
+	                 <div class="col-md-10" >
+	                            <p id="pDescMsg">
 	                            </p>
 	                 </div>
 	         	</div>
@@ -224,22 +225,21 @@
 	                        		minlength="3" 
 	                        		style="width:80px;"
 	                        		name="typeCode"
-	                        		id="typeCode" />
+	                        		id="typeCode" 
+	                        		onChange="checkCodeAct()"/>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row" 
-            	style="margin:5px -15px 5px 10px;" hidden 
-                 id="divCode">
-                 <div class="col-md-12">
+            	 style="margin:5px -15px 5px 10px;"
+                 id="divCodeMsg" hidden>
 	                 <div class="col-md-2">
 	                 </div>
-	                 <div class="col-md-7">
-	                            <p id="divCodeMsg">
+	                 <div class="col-md-10">
+	                            <p id="pCodeMsg">
 	                            </p>
 	                 </div>
-	         	</div>
             </div>    
             <div class="row" style="margin:5px -15px 5px -15px;">
 	            <div class ="row" id="divTypeMsg" hidden="true">
@@ -256,9 +256,9 @@
                 <div class="col-md-12">
                     <div class="form-group">
                         <div class="col-md-6">
-                        	<button class="btn btn-default" type="submit"
-                        	id="submitAddTypeFormButton"
-                        	onClick="submitAddTypeAct()">
+                        	<button class="btn btn-default" type="button"
+                        	id="submitAddTypeFormButton" disabled
+                        	onClick="addTypeAct()"> 
                         	Add Type
                         	</button>
                         </div>
@@ -267,7 +267,7 @@
                     			style="height:30px;font-size:14px;
                     				   margin:3px 0px;"
                     			id="cancelNewTypeButon"
-                    			onClick="cancelNewTypeButtonAction()">
+                    			onClick="cancelNewTypeButtonAction()" disabled>
                     		Cancel 
                     		</button>
             </div>
@@ -533,7 +533,7 @@
                 </div>
                 <div class="col-md-4 text-center">
 	                <button class="btn btn-default" 
-	                		type="button" 
+	                		type="submit" 
 	                		id="prodAdd">
 	                	Add product to Database
 	                </button>

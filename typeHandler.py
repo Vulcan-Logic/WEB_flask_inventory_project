@@ -77,27 +77,39 @@ class initialAddtype(Handler1):
 
 class validateTypeDesc(Handler1):
     def get(self):
+        #returns true if description does not exist
         parentId=self.request.get("parentId")
         desc=self.request.get("Desc")
-        self.response.out.headers['Content-Type'] = 'application/text'
+        self.response.out.headers['Content-Type'] = 'text/json'
         self.response.status_int = 200
+        print("validate Type handler passing desc")
+        print(desc)
+        print("for")
+        print(parentId)
         if TypeQuery().checkDesc(parentId, desc):
-            self.response.out.write("1")
+            responseString="true"
         else:
-            self.response.out.write("0")
-
+            print("sending back 0")
+            responseString="false"
+        self.response.out.write(json.dumps({"response":responseString}))
         
 class validateTypeCode(Handler1):
+    #returns true if code does not exist
     def get(self):
         parentId=self.request.get("parentId")
-        code=self.request.get("code")
-        self.response.out.headers['Content-Type'] = 'application/text'
+        code=self.request.get("Code")
+        self.response.out.headers['Content-Type'] = 'text/json'
         self.response.status_int = 200
-        if TypeQuery().checkCode(parentId, code):
-            self.response.out.write("1")
+        print("validate Type handler passing code")
+        print(code)
+        print("for")
+        print(parentId)
+        if TypeQuery().checkCode(parentId,code):
+            responseString="true"
         else:
-            self.response.out.write("0")
-
+            print("sending back 0")
+            responseString="false"
+        self.response.out.write(json.dumps({"response":responseString}))   
    
 class getTypeList(Handler1):
     def get(self):
