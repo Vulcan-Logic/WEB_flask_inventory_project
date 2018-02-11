@@ -5,16 +5,30 @@ class ProductField(ndb.Model):
 	fieldContents=ndb.StringProperty() #product field contents
 
 class Product(ndb.Model):
-	pType=ndb.IntegerProperty() #product type
 	pName = ndb.StringProperty(required=True) #product name
 	pField=ndb.StructuredProperty(ProductField,repeated=True)
+	pEnteredSKU=ndb.StringProperty()
+	SKU=ndb.StringProperty()
 	dateCreated=ndb.DateTimeProperty(auto_now_add=True)
 	dateModified=ndb.DateTimeProperty(auto_now=True)
 	modifiedBy=ndb.KeyProperty()
-	
-	
+
+class ProductFixedAttributes(ndb.Model):
+	attrName=ndb.StringProperty()
+	attrType=ndb.StringProperty()
+	attrReqd=ndb.BooleanProperty()
+	attrMinLen=ndb.IntegerProperty()
+	attrMaxLen=ndb.IntegerProperty()
+
+class ProductAttribQuery():
+	def getAllAttribs(self):
+		attrQuery=ProductFixedAttributes.query()
+		if attrQuery.count()>0:
+			return(attrQuery.fetch())
+		else:
+			return(None)
+		
 class ProductQuery():
-	
 	def getAllProducts(self):
 		pQuery=Product.query()
 		if pQuery.count()>0:

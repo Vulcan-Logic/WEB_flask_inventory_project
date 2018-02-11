@@ -22,6 +22,8 @@ function pageLoadAction(){
 	//run first time when page is loaded
 	//with appropriate data from the server
 	var select1 = document.getElementById("typeSelector");
+	document.getElementById("startOverButton").disabled=true;
+	document.getElementById("finishButton").disabled=true;
 	if (select1.length>2){
 		var tTypeArray=[];
 		for (ctr=2; ctr<select1.length ; ctr++){
@@ -123,13 +125,9 @@ function typeSelectorAction(){
 	var selectedLevel = selected.getAttribute('data-value2').trim();
 	var selectedId=selected.value.trim();
 	var selectedText=selected.innerHTML.trim();
-//convert types to ing	
-	console.log("selected Level");
-	console.log(selectedLevel);
-	selectedLevel=Number(selectedLevel);
 //check value of selected type, if it is 1 display the add type form
 	if (selectedId=="1"){
-		addNewTypeAction(selectedLevel);
+		addNewTypeAction();
 		document.getElementById("startOverButton").disabled=false;
 	}
 	//check if selected Id is 0, if so display the none label
@@ -148,6 +146,7 @@ function typeSelectorAction(){
 		selectedType=vSelectedType;
 		setBCArray(selectedId,selectedText);
 		document.getElementById("startOverButton").disabled=false;
+		document.getElementById("finishButton").disabled=false;
 		//this loop is to check if the data already exists in local cache
 		var notFound=true;
 		for (ctr in typeListArray){
@@ -159,7 +158,6 @@ function typeSelectorAction(){
 			    loadSelectTypes(false,typeList);
 			    //set focus on the select 
 				notFound=false;
-				currentLevel=typeListArray[ctr].level;
 			}
 		}
 		if (notFound) {
@@ -214,6 +212,8 @@ function startOverAction(){
 	selectedType={typeId:"0",typeDesc:"",typeCode:"",typeLevel:0};
 	loadSelectTypes(true,typeListArray[0].typeList);
 	deactivateAddTypeSection();
+	deactivateProductForm();
+	document.getElementById("finishButton").disabled=true;
 }
 
 function setBCArray(selectedId, selectedText){
@@ -389,7 +389,7 @@ function addTypeAct(){
 	requestString=requestString.concat(newDesc.value.trim());
 	requestString=requestString.concat("&Code=");
 	requestString=requestString.concat(newCode.value.trim());
-	console.log("postForAddType");
+	console.log("AddType");
 	console.log("request string is " + requestString);
 	xhttp.open("POST", "insertType", true);
 	xhttp.onreadystatechange =  function(){
@@ -474,13 +474,13 @@ function checkDescAct(){
 				 	else if (responseType=="false"){
 						console.log("error: duplicate description");
 						displayError("Desc",
-								"Duplicate Description under this parent type");
+						"Error: Duplicate Description under this parent type");
 						refocus(newDesc);
 					}
 			 }
 			 else if (this.readyState == 4 && this.status == 500){
 				 displayError("Desc",
-					"Server Error: Error checking in server");
+					"Server Error: Unable to check value");
 				 refocus(newDesc);
 			 }
 		};
@@ -530,7 +530,7 @@ function checkCodeAct(){
 			 }
 			 else if (this.readyState == 4 && this.status == 500){
 				 displayError("Code",
-					"Server Error: Error checking in server");
+					"Server Error: Unable to check value");
 				 refocus(newCode);
 			 }
 		};
@@ -539,11 +539,12 @@ function checkCodeAct(){
 	}
 }
 
-function addNewTypeAction(selectedLevel){
+function addNewTypeAction(){
 	//deactivate the select control to enable activating the add 
 	//subtype form
-	removeBC(selectedLevel);
 	deactivateSelectSection();
+	document.getElementById("finishButton").disabled=true;
+	resetTypeForm();
 	//remove breadcrumb if still displaying on this level
 	//show the add types form
 	//enable the elements of the form
@@ -554,6 +555,7 @@ function cancelNewTypeButtonAction(){
 	deactivateAddTypeSection();
 	activateSelectSection();
 	document.getElementById("typeSelector").selectedIndex=0;
+	document.getElementById("finishButton").disabled=true;
 }
 
 function activateSelectSection(){
@@ -574,6 +576,54 @@ function activateAddTypeSection(buttonString){
 	document.getElementById("addTypeForm").style.display="";
 	document.getElementById("typeDescription").disabled=false;
 	document.getElementById("typeCode").disabled=false;
+}
+
+function activateProductForm(){
+	document.getElementById("divFormProduct").classList.remove('disabled');
+	document.getElementById("divFormProduct").classList.add('enabled');
+	resetProductForm();
+}
+
+function deactivateProductForm(){
+	document.getElementById("divFormProduct").classList.remove('enabled');
+	document.getElementById("divFormProduct").classList.add('disabled');
+}
+
+function resetProductForm(){
+	document.getElementById("pName").value="";
+	document.getElementById("pSku").value="";
+	document.getElementById("prodDesc").value="";
+	document.getElementById("1attrValue").value="";
+	document.getElementById("2attrValue").value="";
+	document.getElementById("3attrValue").value="";
+	document.getElementById("4attrValue").value="";
+	document.getElementById("prodImageDesc").value="";
+}
+
+function resetTypeForm(){
+	document.getElementById("typeDescription").value="";
+	document.getElementById("typeCode").value="";
+}
+
+function generateSKU() {
+	//go thru breadcrumbs and make a SKU, set the SKU
+}
+
+function finishButtonAct(){
+	activateProductForm();
+	document.getElementById("fieldsProduct").disabled=false;
+	generateSKU();
+}
+
+function attrDescBtnAct(index){
+	elementName=index+"attrDesc";
+	document.getElementById(elementName).readOnly=false;
+}
+
+function attrValueSet(index){
+	eleName=index+"attrValue";
+	ele=document.getElementById(eleName);
+	refocus(ele);
 }
 
 function isVisible (ele) {

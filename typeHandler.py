@@ -11,7 +11,7 @@ import datetime
 
 class getStarterTypesJSON(Handler1):
     def get(self):
-        returnedTypes=TypeQuery().getTypesByParent("0")
+        returnedTypes=TypeQuery().getChildTypesByKey()
         print(returnedTypes)
         retString=returnedTypes
         print(json.dumps(retString))
@@ -44,7 +44,7 @@ class insertType(Handler1):
                 returnVal=TypeQuery().addType(typeCode=typeCode,
                                    typeDefinition=typeDesc)
         if returnVal is not None:
-            types=TypeQuery().getTypesByParent(parentKey=parentKey)            
+            types=TypeQuery().getChildTypesByKey(key=parentKey)            
             retCount=len(types)
             print("in insertType returning list with added entry")
             print(retCount)

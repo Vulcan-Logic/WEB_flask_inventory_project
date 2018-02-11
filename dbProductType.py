@@ -154,14 +154,15 @@ class TypeQuery():
         if key is not None:
             return(key.get())
     
-    def getChildTypesByKey(self,key=None,level=0):
+    def getChildTypesByKey(self,key=None):
         #key in url safe mode, level int 
-        if key is not None: 
-            parentKey=ndb.Key(urlsafe=key)
-            typ=self.getTypeByKey(parentKey)
-            level=typ.level+1
+        if key is not None and key!="0": 
+                parentKey=ndb.Key(urlsafe=key)
+                typ=self.getTypeByKey(parentKey)
+                level=typ.level+1
         else:
             parentKey=ndb.Key('ProductType',"0")
+            level=0
         query=ProductType().query(ProductType.level==level, 
                                   ancestor=parentKey).order(
                                                ProductType.dateModified)    
