@@ -39,3 +39,10 @@ input:focus {
 	padding-right:12px;
 }
 
+#divFormProduct.disabled{
+	opacity:0.5;
+}
+
+#divFormProduct.enabled{
+	opacity:1;
+}

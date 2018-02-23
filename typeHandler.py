@@ -8,34 +8,10 @@ from dbProductType import TypeQuery
 import json
 import datetime
 
-
-class getStarterTypesJSON(Handler1):
-    def get(self):
-        returnedTypes=TypeQuery().getChildTypesByKey()
-        print(returnedTypes)
-        retString=returnedTypes
-        print(json.dumps(retString))
-        self.response.out.headers['Content-Type'] = 'text/json'
-        self.response.status_int = 200
-        self.response.out.write(json.dumps(retString))
-
-
-class getStarterTypes(Handler1):
-    def get(self):
-        self.render("starterTest.html")
-
     
-class insertType(Handler1): 
-    def post(self):
-        parentKey=self.request.get("parentId")
-        typeDesc=self.request.get("Desc")
-        typeCode=self.request.get("Code")
-        print('in adding items parent id is ')
-        print(parentKey)
-        print("Desc")
-        print(typeDesc)
-        print("Code")
-        print(typeCode)
+class catType(): 
+    def put(self,parentKey,typeCode,typeDesc):
+        retList=None
         if parentKey!="0":
                 returnVal=TypeQuery().addType(typeCode=typeCode,
                                    typeDefinition=typeDesc,
@@ -46,22 +22,51 @@ class insertType(Handler1):
         if returnVal is not None:
             types=TypeQuery().getChildTypesByKey(key=parentKey)            
             retCount=len(types)
-            print("in insertType returning list with added entry")
-            print(retCount)
             if retCount!=0:
                 retString=json.dumps(types)
             else: 
                 retString="" 
             retList=json.dumps({"count":retCount,"list":retString})  
-            self.response.out.headers['Content-Type'] = 'text/json'
-            self.response.status_int = 200
-            self.response.out.write(retList)
         else:
-            self.response.headers['Content-Type'] = 'application/text'
-            self.response.status_int = 500
-            self.response.out.write("")
+            raise Exception(500,"Server Error")            
+        return(retList)
+    
+    def checkDesc(self,parentId,desc):
+        #returns true if description does not exist
+        if TypeQuery().checkDesc(parentId, desc):
+            return(True)
+        else:
+            return(False)
+    #returns true if code does not exist
+    def checkCode(self,parentId,code):
+        if TypeQuery().checkCode(parentId,code):
+            return(True)
+        else:
+            return(False)
 
-           
+    def getChildList(self,keyUrl):
+        #return json 
+        types=TypeQuery().getChildTypesByKey(key=keyUrl)
+        retList=None
+        if types is not None:
+            retCount=len(types)
+            if retCount!=0:
+                retString=json.dumps(types)
+            else: 
+                retString="" 
+            retList=json.dumps({"count":retCount,"list":retString})  
+        else:
+            raise Exception(500,"Server Error")
+        return(retList)
+
+
+
+
+
+
+
+    
+#obsolete or not used
 class initialAddtype(Handler1):
     def get(self):
         self.render("addInitialTypes.html")
@@ -73,66 +78,21 @@ class initialAddtype(Handler1):
         print(tCode)
         TypeQuery().addType(typeCode=tCode,typeDefinition=typeDesc)
         self.render("addInitialTypes.html")
- 
 
-class validateTypeDesc(Handler1):
+
+class getStarterTypesJSON(Handler1):
     def get(self):
-        #returns true if description does not exist
-        parentId=self.request.get("parentId")
-        desc=self.request.get("Desc")
+        returnedTypes=TypeQuery().getChildTypesByKey()
+        retString=returnedTypes
         self.response.out.headers['Content-Type'] = 'text/json'
         self.response.status_int = 200
-        print("validate Type handler passing desc")
-        print(desc)
-        print("for")
-        print(parentId)
-        if TypeQuery().checkDesc(parentId, desc):
-            responseString="true"
-        else:
-            print("sending back 0")
-            responseString="false"
-        self.response.out.write(json.dumps({"response":responseString}))
-        
-class validateTypeCode(Handler1):
-    #returns true if code does not exist
+        self.response.out.write(json.dumps(retString))
+
+
+class getStarterTypes(Handler1):
     def get(self):
-        parentId=self.request.get("parentId")
-        code=self.request.get("Code")
-        self.response.out.headers['Content-Type'] = 'text/json'
-        self.response.status_int = 200
-        print("validate Type handler passing code")
-        print(code)
-        print("for")
-        print(parentId)
-        if TypeQuery().checkCode(parentId,code):
-            responseString="true"
-        else:
-            print("sending back 0")
-            responseString="false"
-        self.response.out.write(json.dumps({"response":responseString}))   
-   
-class getTypeList(Handler1):
-    def get(self):
-        #return json 
-        keyUrl=self.request.get('kId')
-        types=TypeQuery().getChildTypesByKey(key=keyUrl)
-        if types is not None:
-            retCount=len(types)
-            print("in getTypeList: ListCount")
-            print(retCount)
-            if retCount!=0:
-                retString=json.dumps(types)
-            else: 
-                retString="" 
-            retList=json.dumps({"count":retCount,"list":retString})  
-            self.response.out.headers['Content-Type'] = 'text/json'
-            self.response.status_int = 200
-            self.response.out.write(retList)
-        else:
-            self.response.headers['Content-Type'] = 'application/text'
-            self.response.status_int = 500
-            self.response.out.write("")
-    
+        self.render("starterTest.html")
+
             
 def filter_results(qry):
     """
@@ -168,6 +128,9 @@ def make_ndb_return_data_json_serializable(data):
     # Add the key so that we have a reference to the record
     record['key'] = data.key.id()
     return(record)
+
+
+
 
 
             

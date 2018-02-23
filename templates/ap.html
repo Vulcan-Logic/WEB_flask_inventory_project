@@ -501,8 +501,8 @@
 			                </label>
 		                </div>
 		                <div class="col-md-9 text-center" id="image">
-		                	<img id="prodImage" alt="No image uploaded" 
-		                	height="100" width="100">
+							<canvas id="prodCanvas" width="300" height="300">
+							</canvas>
 		                </div>
 			        </div>
 		
@@ -514,7 +514,10 @@
 		                </div>
 		                <div class="col-md-4">
 		                	<span class="float-md-left">
-		                		<input type="file" id="chooseImageButton">
+		                		<input type="file" id="chooseImageButton"
+		                		accept="image/*" 
+		                		onChange="validateAndDisplay(this);
+		                		>
 		                	</span>
 		                </div>
 		            </div>

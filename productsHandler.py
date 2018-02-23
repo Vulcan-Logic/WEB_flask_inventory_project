@@ -2,21 +2,13 @@ from templating import Handler1
 from dbProduct import ProductQuery
 from dbProductType import TypeQuery
 
-class addProductsHandler(Handler1):
-	def get(self):
-		# check authentication before displaying page.
-		self.display()
-			
-	def display(self,user=""):
+class addProduct():
+	def get(self,user=None):
 		sData=TypeQuery().getChildTypesByKey()
 		if (sData is not None and len(sData)!=0):
-			self.render("ap.html",sData=sData,cont=True)
+			return(sData)
 		else:
-			self.render("ap.html",cont=False)
-			
-	def post(self):
-		print("post called with data")
-		
+			return(None)
 	
 class listProductsHandler(Handler1):
 	def get(self):

@@ -162,7 +162,7 @@ function typeSelectorAction(){
 		}
 		if (notFound) {
 			//parentKey has not been found in local array 
-			requestString='getTypeList?kId='+selectedId;
+			requestString='/types/getTypeList?kId='+selectedId;
 			//prepare request and send to server
 			//get data back and display
 			var xhttp = new XMLHttpRequest();
@@ -391,7 +391,7 @@ function addTypeAct(){
 	requestString=requestString.concat(newCode.value.trim());
 	console.log("AddType");
 	console.log("request string is " + requestString);
-	xhttp.open("POST", "insertType", true);
+	xhttp.open("POST", "/types/insertType", true);
 	xhttp.onreadystatechange =  function(){
 		if (this.readyState == 4 && this.status == 200){
 			var dataFrmSvr = JSON.parse(this.responseText);
@@ -451,7 +451,7 @@ function checkDescAct(){
 	 refocus(newDesc);
 	}
 	else{
-		var requestString="checkDesc?parentId=";
+		var requestString="/types/checkDesc?parentId=";
 		requestString=requestString.concat(selectedId);
 		requestString=requestString.concat("&Desc=");
 		requestString=requestString.concat(newDescValue);
@@ -500,7 +500,7 @@ function checkCodeAct(){
 	 refocus(newCode);
 	}
 	else{
-		var requestString="checkCode?parentId=";
+		var requestString="/types/checkCode?parentId=";
 		requestString=requestString.concat(selectedId);
 		requestString=requestString.concat("&Code=");
 		requestString=requestString.concat(newCodeValue);
@@ -642,6 +642,29 @@ function refocus(elm) {
         elm.focus();
     }
 }
+
+//need to change this
+
+function validateAndDisplay(input){
+    var URL = window.URL || window.webkitURL;
+    var file = input.files[0];
+
+    if (file) {
+        var image = new Image();
+
+        image.onload = function() {
+            if (this.width) {
+                 console.log('Image has width, I think it is real image');
+                 //TODO: upload to backend
+            }
+        };
+
+        image.src = URL.createObjectURL(file);
+    }
+};​
+
+
+
 
 
 //obsolete
