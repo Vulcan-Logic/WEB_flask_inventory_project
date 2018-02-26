@@ -6,6 +6,8 @@ from productsHandler import skuHandler
 from typeHandler import catType
 import logging
 import json
+from google.appengine.api import app_identity
+import os
 
 app = Flask(__name__)
 
@@ -23,6 +25,21 @@ def products(productPage):
             return(render_template("ap.html",sData=sData,cont=True))
         else:
             return(render_template("ap.html",cont=False))
+    elif productPage=="rqst":
+        rqstType=request.args.get("type")
+        if rqstType=="storageAuth":
+            auth_token, _ = app_identity.get_access_token(
+            'https://www.googleapis.com/auth/cloud-storage')
+            bucket_name = os.environ.get('BUCKET_NAME',
+                               app_identity.get_default_gcs_bucket_name())
+            print(bucket_name)
+            print(auth_token)
+            retValue=json.dumps({"bucket":bucket_name, 
+                                 "auth":auth_token})
+            response=make_response(retValue) 
+            response.headers['Content-Type'] = 'text/json'
+            response.status_code = 200
+            return(response)
     elif productPage=="list":
         return("listHandler")
     elif productPage=="sku":

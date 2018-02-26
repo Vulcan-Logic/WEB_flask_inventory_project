@@ -46,3 +46,7 @@ input:focus {
 #divFormProduct.enabled{
 	opacity:1;
 }
+
+.prodCanvas {
+	border:1px solid #d3d3d3;
+}

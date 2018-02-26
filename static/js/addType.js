@@ -643,28 +643,101 @@ function refocus(elm) {
     }
 }
 
-//need to change this
+//need to change this into a different js file
 
-function validateAndDisplay(input){
-    var URL = window.URL || window.webkitURL;
-    var file = input.files[0];
+function validateAndDisplay(){
+	if (typeof (FileReader) != "undefined") {
+		chooseImage=document.getElementById("chooseImage");
+        var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
+        for (var i = 0; i < chooseImage.files.length; i++) {
+            var file = chooseImage.files[i];
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var src = reader.result;
+                if (regex.test(file.name.toLowerCase())) {
+                        console.log(file.name);
+                        canvas=document.getElementById("prodCanvas");
+                        console.log(canvas);
+			            Caman(canvas, src, function () {
+  				        // manipulate image here
+  				            this.resize({
+    					        width: 480,
+    					        height: 270
+  				            });
 
-    if (file) {
-        var image = new Image();
-
-        image.onload = function() {
-            if (this.width) {
-                 console.log('Image has width, I think it is real image');
-                 //TODO: upload to backend
-            }
-        };
-
-        image.src = URL.createObjectURL(file);
+  				            // You still have to call render!
+  				            this.render();
+				        });
+			            postPicture(file.name,src);
+       		    }
+		        else {
+                    alert(file.name + " is not a valid image file.");
+                    return false;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
     }
-};​
+    else {
+        alert("This browser does not support HTML5 FileReader.");
+    }
+}
 
+function postPicture(fileName,src){
+	//get bucket name and auth  code from server
+	//prepare a json request
+ 	var bucketName=null;
+ 	var token=null;
+	var requestString="/products/rqst?type=storageAuth";
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function (){
+		 if (this.readyState == 4 && this.status == 200){
+			 	var svrResponse= JSON.parse(this.responseText);
+			 	bucketName=svrResponse.bucket;
+			 	token=svrResponse.auth;
+			 	console.log("bukect");
+			 	console.log(bucketName);
+			 	console.log("Token");
+			 	console.log(token);
+			 	postPicture2(fileName,src,bucketName,token);
+		 }
+		 else if (this.readyState == 4 && this.status == 500){
+			 alert("Server Error: Unable to get authentication codes");
+		 }
+	};
+	xhttp.open("GET",requestString, true);
+	xhttp.send();
+}
 
-
+function postPicture2(fileName,src,bucketName,token){
+	var location=null;
+	if ((bucketName!=null) && (token!=null)){
+		console.log("in post request");
+		var xhttp = new XMLHttpRequest();
+		var requestString="/_ah/gcs/upload/storage/v1/b/";
+		requestString=requestString.concat(bucketName);
+		requestString=requestString.concat("/o?uploadType=media&name=");
+		requestString=requestString.concat(fileName);
+		console.log("request string is " + requestString);
+		xhttp.open("POST", requestString, true);
+		xhttp.onreadystatechange =  function(){
+			if (this.readyState == 4 && this.status == 201){
+				var headers=xhttp.getAllResponseHeaders().toLowerCase();
+				console.log(typeof(headers));
+				console.log(headers);
+				location=headers.slice(headers.lastIndexOf("location:")+10);
+				console.log(location.trim());
+			}
+			else if (this.readyState == 4 && this.status == 500) {
+				alert("ERROR:in adding new type in server");
+			}
+		};
+		xhttp.setRequestHeader("Authorization", token);
+		xhttp.setRequestHeader("Content-type", 
+        "image/png");
+		xhttp.send(src); 
+	}
+}
 
 
 //obsolete

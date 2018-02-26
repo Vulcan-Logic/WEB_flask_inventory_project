@@ -1,8 +1,7 @@
-from templating import Handler2
 from templating import Handler1
 
 
-class welcomeHandler(Handler2):
+class welcomeHandler(Handler1):
 	def get(self):
 		# check authentication before displaying page.
 		self.display()

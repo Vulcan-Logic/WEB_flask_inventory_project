@@ -501,7 +501,7 @@
 			                </label>
 		                </div>
 		                <div class="col-md-9 text-center" id="image">
-							<canvas id="prodCanvas" width="300" height="300">
+							<canvas id="prodCanvas" width="480" height="270">
 							</canvas>
 		                </div>
 			        </div>
@@ -514,9 +514,9 @@
 		                </div>
 		                <div class="col-md-4">
 		                	<span class="float-md-left">
-		                		<input type="file" id="chooseImageButton"
+		                		<input type="file" id="chooseImage"
 		                		accept="image/*" 
-		                		onChange="validateAndDisplay(this);
+		                		onChange="validateAndDisplay()"
 		                		>
 		                	</span>
 		                </div>
@@ -626,7 +626,9 @@
     </div>
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/static/js/caman.full.min.js"></script>
     <script src="/static/js/addType.js"></script>
+
 </body>
 
 </html>
