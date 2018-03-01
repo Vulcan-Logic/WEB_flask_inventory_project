@@ -1,0 +1,5 @@
+Flask==0.12.2
+Werkzeug<0.13,>=0.12.0
+jinja2
+markupsafe
+google-cloud-storage

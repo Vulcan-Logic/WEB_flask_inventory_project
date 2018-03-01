@@ -22,6 +22,11 @@ function pageLoadAction(){
 	//run first time when page is loaded
 	//with appropriate data from the server
 	var select1 = document.getElementById("typeSelector");
+//	document.getElementById("formProduct").addEventListener(
+//			"submit", function(event){
+//		submitAction();
+//	    event.preventDefault();
+//	});
 	document.getElementById("startOverButton").disabled=true;
 	document.getElementById("finishButton").disabled=true;
 	if (select1.length>2){
@@ -657,18 +662,17 @@ function validateAndDisplay(){
                 if (regex.test(file.name.toLowerCase())) {
                         console.log(file.name);
                         canvas=document.getElementById("prodCanvas");
-                        console.log(canvas);
 			            Caman(canvas, src, function () {
   				        // manipulate image here
   				            this.resize({
     					        width: 480,
     					        height: 270
   				            });
-
   				            // You still have to call render!
   				            this.render();
 				        });
-			            postPicture(file.name,src);
+			            //for sending image as a post request
+			            //postPicture(file.name,src);
        		    }
 		        else {
                     alert(file.name + " is not a valid image file.");
@@ -684,61 +688,62 @@ function validateAndDisplay(){
 }
 
 function postPicture(fileName,src){
-	//get bucket name and auth  code from server
-	//prepare a json request
- 	var bucketName=null;
- 	var token=null;
-	var requestString="/products/rqst?type=storageAuth";
+	console.log("in post request");
 	var xhttp = new XMLHttpRequest();
-	xhttp.onreadystatechange = function (){
-		 if (this.readyState == 4 && this.status == 200){
-			 	var svrResponse= JSON.parse(this.responseText);
-			 	bucketName=svrResponse.bucket;
-			 	token=svrResponse.auth;
-			 	console.log("bukect");
-			 	console.log(bucketName);
-			 	console.log("Token");
-			 	console.log(token);
-			 	postPicture2(fileName,src,bucketName,token);
-		 }
-		 else if (this.readyState == 4 && this.status == 500){
-			 alert("Server Error: Unable to get authentication codes");
-		 }
+	var requestString="/products/rqst?type=storageTest&name=";
+	requestString=requestString.concat(fileName);
+	console.log("request string is " + requestString);
+	xhttp.open("POST", requestString, true);
+	xhttp.onreadystatechange =  function(){
+		if (this.readyState == 4 && this.status == 200){
+			console.log("OK")
+		}
+		else if (this.readyState == 4 && this.status == 500) {
+			alert("ERROR:in adding new type in server");
+		}
 	};
-	xhttp.open("GET",requestString, true);
-	xhttp.send();
+	xhttp.setRequestHeader("Content-type", 
+    "image/png");
+	xhttp.send(src); 
 }
 
-function postPicture2(fileName,src,bucketName,token){
-	var location=null;
-	if ((bucketName!=null) && (token!=null)){
-		console.log("in post request");
-		var xhttp = new XMLHttpRequest();
-		var requestString="/_ah/gcs/upload/storage/v1/b/";
-		requestString=requestString.concat(bucketName);
-		requestString=requestString.concat("/o?uploadType=media&name=");
-		requestString=requestString.concat(fileName);
-		console.log("request string is " + requestString);
-		xhttp.open("POST", requestString, true);
-		xhttp.onreadystatechange =  function(){
-			if (this.readyState == 4 && this.status == 201){
-				var headers=xhttp.getAllResponseHeaders().toLowerCase();
-				console.log(typeof(headers));
-				console.log(headers);
-				location=headers.slice(headers.lastIndexOf("location:")+10);
-				console.log(location.trim());
-			}
-			else if (this.readyState == 4 && this.status == 500) {
-				alert("ERROR:in adding new type in server");
-			}
-		};
-		xhttp.setRequestHeader("Authorization", token);
-		xhttp.setRequestHeader("Content-type", 
-        "image/png");
-		xhttp.send(src); 
+function submitAction(){
+	console.log("in form submit");
+	var vForm=document.getElementById("formProduct");
+	var elements = vForm.elements;
+	var fd = new FormData();
+	for (var i = 0, element; element = elements[i++];) {
+	    if (element.type === "text"){
+	        fd.append(element.id,element.value);
+	    }
+	    else if (element.type === "textarea"){
+	        fd.append(element.id,element.value);
+	    }
+	    else if (element.type==="file"){
+	    	fd.append(element.id,element.files[0],element.value);
+	    }
 	}
+	for (var key of fd.keys()) {
+		   console.log(key); 
+		}
+	submitAction2(fd);
 }
 
+function submitAction2(fd){	
+	var xhttp = new XMLHttpRequest();
+	var requestString="/products/rqst?type=chkSt";
+	xhttp.open("POST", requestString, true);
+	xhttp.onreadystatechange =  function(){
+		if (this.readyState == 4 && this.status == 200){
+			console.log("OK")
+		}
+		else if (this.readyState == 4 && this.status == 500) {
+			alert("ERROR:in adding new type in server");
+		}
+	};
+	xhttp.setRequestHeader("Content-type", "multipart/form-data");
+	xhttp.send(fd); 
+}
 
 //obsolete
 function checkCode(){
@@ -831,3 +836,51 @@ function setBCArray1(selectedId,selectedText){
 	}
 	showBC();
 }
+
+
+function obs_postPicture(fileName,src){
+	//get bucket name and auth  code from server
+	//prepare a json request
+ 	var bucketName=null;
+ 	var token=null;
+	var requestString="/products/rqst?type=storageAuth";
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function (){
+		 if (this.readyState == 4 && this.status == 200){
+			 	var svrResponse= JSON.parse(this.responseText);
+			 	bucketName=svrResponse.bucket;
+			 	token=svrResponse.auth;
+			 	console.log("bukect");
+			 	console.log(bucketName);
+			 	console.log("Token");
+			 	console.log(token);
+			 	postPicture2(fileName,src,bucketName,token);
+		 }
+		 else if (this.readyState == 4 && this.status == 500){
+			 alert("Server Error: Unable to get authentication codes");
+		 }
+	};
+	xhttp.open("GET",requestString, true);
+	xhttp.send();
+}
+
+
+function obs_postPic3(bucketName,token){
+	var requestString="/_ah/gcs/storage/v1/b/";
+	requestString=requestString.concat(bucketName);
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function (){
+		 if (this.readyState == 4 && this.status == 200){
+			 var svrResponse= this.responseText;
+			 console.log("Response");
+			 console.log(svrResponse);
+		 }
+		 else if (this.readyState == 4 && this.status == 500){
+			 alert("Server Error:");
+		 }
+	};
+	xhttp.open("GET",requestString, true);
+	xhttp.setRequestHeader("Authorization", token);
+	xhttp.send();
+}
+

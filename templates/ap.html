@@ -286,7 +286,7 @@
 	                </h4>
 	            </div>
 	        </div>
-	        <form id="formProduct">
+	        <form id="formProduct" enctype="multipart/form-data" method="post">
 		        <fieldset id ="fieldsProduct" disabled>
 		        	<div class="row">
 			        	<div class="col-md-6">
@@ -295,7 +295,9 @@
 				            		Product Name:
 				            	</label>
 				            	<input class="form-control" 
-				            	type="text" id="pName">
+				            	form="formProduct"
+				            	type="text" id="pName"
+				            	name="pName">
 				            </div>
 			            </div>
 			            <div class="col-md-4">
@@ -304,7 +306,9 @@
 				            		SKU
 				            	</label>
 				            	<input class="form-control" 
-				            	type="text" id="pSku">
+				            	form="formProduct"
+				            	type="text" id="pSku"
+				            	name="pSku">
 				            </div>
 				        </div>
 				        <div class="col-md-2">
@@ -323,8 +327,10 @@
 		                    		   id="labelProdDesc">
 		                    		Product Description
 		                    	</label>
-		                    	<textarea class="form-control" 
-		                    	id="prodDesc">
+		                    	<textarea class="form-control"
+		                    	form="formProduct" 
+		                    	id="prodDesc"
+		                    	name="prodDesc">
 		                    	</textarea>
 		                    </div>
 		                </div>
@@ -340,8 +346,10 @@
 							<div class="col-md-4">
 				     	    	<div class="input-group">
 					    	    	<input class="form-control" type="text"
+					    	    			form="formProduct"
 					    	    	       id="1attrDesc" value="Weight" 
 					    	    	       onChange="attrValueSet(1)"
+					    	    	       name="1attrDesc"
 					    	    	       readonly>
 				            		    <div class="input-group-btn">
 				                    	    <button class="btn btn-default" 
@@ -360,7 +368,9 @@
 			                </div>
 			                <div class="col-md-5">
 			                	<input class="form-control" 
-			                	type="text" id="1attrValue">
+			                	form="formProduct"
+			                	type="text" id="1attrValue"
+			                	name="1attrValue">
 		                	</div>
 		            	</div>
 		       		</div>
@@ -375,7 +385,9 @@
 							<div class="col-md-4">
 				     	    	<div class="input-group">
 					    	    	<input class="form-control" type="text"
+					    	    		   form="formProduct"
 					    	    	       id="2attrDesc"
+					    	    	       name="2attrDesc"
 					    	    	       value="Length(cm)"
 					    	    	       onChange="attrValueSet(2)" 
 					    	    	       readonly>
@@ -395,8 +407,10 @@
 				                </label>
 			                </div>
 			                <div class="col-md-5">
-			                	<input class="form-control" 
-			                	type="text" id="2attrValue">
+			                	<input class="form-control"
+			                	form="formProduct" 
+			                	type="text" id="2attrValue"
+			                	name="2attrValue">
 		                	</div>
 		            	</div>
 		       		</div>
@@ -411,7 +425,9 @@
 							<div class="col-md-4">
 				     	    	<div class="input-group">
 					    	    	<input class="form-control" type="text"
+					    	    			form="formProduct"
 					    	    	       id="3attrDesc"
+					    	    	       name="3attrDesc"
 					    	    	       value="Depth(cm)"
 					    	    	       onChange="attrValueSet(3)" 
 					    	    	       readonly>
@@ -431,8 +447,10 @@
 				                </label>
 			                </div>
 			                <div class="col-md-5">
-			                	<input class="form-control" 
-			                	type="text" id="3attrValue">
+			                	<input class="form-control"
+			                	form="formProduct" 
+			                	type="text" id="3attrValue"
+			                	name="3attrValue">
 		                	</div>
 		            	</div>
 		       		</div>
@@ -447,7 +465,9 @@
 							<div class="col-md-4">
 				     	    	<div class="input-group">
 					    	    	<input class="form-control" type="text"
+					    	    			form="formProduct"
 					    	    	       id="4attrDesc"
+					    	    	       name="4attrDesc"
 					    	    	       value="Height(cm)"
 					    	    	       onChange="attrValueSet(4)" 
 					    	    	       readonly>
@@ -468,7 +488,8 @@
 			                </div>
 			                <div class="col-md-5">
 			                	<input class="form-control" 
-			                	type="text" id="4attrValue">
+			                	type="text" id="4attrValue"
+			                	name="4attrValue">
 		                	</div>
 		            	</div>
 		       		</div>
@@ -486,9 +507,10 @@
 		
 					<div class="form-group"  hidden="True">
 						<input class="form-control" type="text"
-					    	    	       id="noAttr"
-					    	    	      
-					    	    	       disabled >
+					    	    	      id="noAttr"
+					    	    	      name="noAttr" 
+					    	    	      value="4"
+					    	    	      form="formProduct">
 					</div>
 					          
 		            <div id="moreAttr">
@@ -515,6 +537,8 @@
 		                <div class="col-md-4">
 		                	<span class="float-md-left">
 		                		<input type="file" id="chooseImage"
+		                		name="chooseImage"
+		                		form="formProduct"
 		                		accept="image/*" 
 		                		onChange="validateAndDisplay()"
 		                		>
@@ -529,18 +553,21 @@
 		                    	       id="labelImageDesc">
 		                    		Image Description
 		                    	</label>
-		                    	<textarea class="form-control" 
-		                    			  id="prodImageDesc">
+		                    	<textarea class="form-control"
+		                    				form="formProduct" 
+		                    			  id="prodImageDesc"
+		                    			  name="prodImageDesc">
 		                    	</textarea>
 		                    </div>
 		                </div>
 		            </div>
 		 	        
-		            <div class="row">
+		            <div class="row form-group">
 		                <div class="col-md-4 text-center">
 		                	<button class="btn btn-default" 
 		                			type="button" 
 		                			id="prodReset"
+		                			form="formProduct"
 		                			onClick="resetProductForm()">
 		                		Reset Form
 		                	</button>
@@ -549,6 +576,7 @@
 		                	<button class="btn btn-default" 
 		                			type="button" 
 		                			id="prodCancel"
+		                			form="formProduct"
 		                			onClick="document.location.href='/';">
 		                		Cancel and Return to Admin Menu
 		                	</button>
@@ -556,6 +584,7 @@
 		                <div class="col-md-4 text-center">
 			                <button class="btn btn-default" 
 			                		type="submit" 
+			                		form="formProduct"
 			                		id="prodAdd">
 			                	Add product to Database
 			                </button>

@@ -1,4 +1,4 @@
 virtualenv env
 source env/bin/activate
-dev_appserver.py --storage_path=./data/ --default_gcs_bucket_name "clutchindia-187410" app.yaml
+dev_appserver.py --storage_path=./data/ --default_gcs_bucket_name clutchindia-187410 app.yaml
 deactivate

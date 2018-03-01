@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, abort, make_response
+from flask import Flask,render_template,request,abort,make_response,redirect
 from welcomeHandler import welcomeHandler
 from productsHandler import addProduct
 from productsHandler import listProductsHandler
@@ -6,8 +6,9 @@ from productsHandler import skuHandler
 from typeHandler import catType
 import logging
 import json
-from google.appengine.api import app_identity
-import os
+from mainSub import *
+
+
 
 app = Flask(__name__)
 
@@ -17,36 +18,50 @@ def index():
 
 @app.route('/products/<string:productPage>',methods=['GET', 'POST'])
 def products(productPage):
-    if productPage=="add":
-    #get results from logic layer
-        sData=addProduct().get()
-    #prepare response
-        if sData is not None:
-            return(render_template("ap.html",sData=sData,cont=True))
+    try:
+        if productPage=="add":
+            if request.method=='GET':
+            #get results from logic layer
+                sData=addProduct().get()
+            #prepare response
+                if sData is not None:
+                    return(render_template("ap.html",sData=sData,cont=True))
+                else:
+                    return(render_template("ap.html",cont=False))
+            elif request.method=='POST':
+                if gcsFunction2(request):
+                    return(redirect("/products/add",code=303))
+                else:
+                    raise Exception(500,"Server Error")
+        elif productPage=="rqst":
+            rqstType=request.args.get("type")
+            fileName=request.args.get("name")
+            data=request.data
+            if rqstType=="storageTest":
+                gcsFunction1(fileName,data)
+                response=make_response("OK") 
+                #response.headers['Content-Type'] = 'text/json'
+                response.status_code = 200
+                return(response)
+            elif rqstType=="chkSt":
+                print("in chkst")
+                print(request.form)
+                return("OK")
+        elif productPage=="list":
+            return("listHandler")
+        elif productPage=="sku":
+            return("skuHandler")
         else:
-            return(render_template("ap.html",cont=False))
-    elif productPage=="rqst":
-        rqstType=request.args.get("type")
-        if rqstType=="storageAuth":
-            auth_token, _ = app_identity.get_access_token(
-            'https://www.googleapis.com/auth/cloud-storage')
-            bucket_name = os.environ.get('BUCKET_NAME',
-                               app_identity.get_default_gcs_bucket_name())
-            print(bucket_name)
-            print(auth_token)
-            retValue=json.dumps({"bucket":bucket_name, 
-                                 "auth":auth_token})
-            response=make_response(retValue) 
-            response.headers['Content-Type'] = 'text/json'
-            response.status_code = 200
-            return(response)
-    elif productPage=="list":
-        return("listHandler")
-    elif productPage=="sku":
-        return("skuHandler")
-    else:
-        abort(404)
-    
+            abort(404)
+    except Exception as e:
+        x,y = e.args
+        if x==500:
+            abort(500)
+        elif x==404:
+            abort(404)
+        else:
+            server_error(e)
+
     
 @app.route('/types/<string:typePage>',methods=['GET','POST'])
 def types(typePage):
@@ -161,7 +176,6 @@ def server_error(e):
 #                                 ('/getStarterTypesJSON', 
 #                                                     getStarterTypesJSON)], 
 #                                debug = True))
-
 
 
 
