@@ -15,10 +15,35 @@ class ProductType(ndb.Model):
     counter=ndb.IntegerProperty()
     dateModified=ndb.DateTimeProperty(auto_now=True)
     modifiedBy=ndb.KeyProperty()
+
+#this should be associated 
+#with the category and not individual products
+class ProductTypeFixedAttributes(ndb.Model):
+    attrName=ndb.StringProperty()
+    attrType=ndb.StringProperty()
+    attrReqd=ndb.BooleanProperty()
+    attrMinLen=ndb.IntegerProperty()
+    attrMaxLen=ndb.IntegerProperty()
+
+class ProductTypeAttribQuery():
+    #need to pass parent category key to get attributes for this category
+    def get(self,parentKey=None):
+        attrQuery=ProductTypeFixedAttributes.query(parent=parentKey)
+        if attrQuery.count()>0:
+            return(attrQuery.fetch())
+        else:
+            return(None)    
+    #set attributes for this category of products    
+    def set(self,default=True,attribList=None,parentkey=None):
+        pass
+
     
 class TypeQuery():
     
     def addType(self,typeCode,typeDefinition,parentKey=None):
+        #to do 
+        # make sure that the default attributes for this type are carried 
+        #on from parent to child 
         if parentKey is not None:
             if parentKey=="0":
                 parentKey=ndb.Key('ProductType',"0")

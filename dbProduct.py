@@ -1,32 +1,32 @@
 from google.appengine.ext import ndb
 
+#the parent key of this should be product
 class ProductField(ndb.Model):
 	fieldName = ndb.StringProperty() #product field description
 	fieldContents=ndb.StringProperty() #product field contents
 
+#the parent key of this should be product
+class ProductImages(ndb.Model):
+	imageName=ndb.StringProperty()
+	imageLocation=ndb.StringProperty()
+
 class Product(ndb.Model):
 	pName = ndb.StringProperty(required=True) #product name
-	pField=ndb.StructuredProperty(ProductField,repeated=True)
+	pFields=ndb.StructuredProperty(ProductField,repeated=True)
+	pImages=ndb.StructuredProperty(ProductImages,repeted=True)
 	pEnteredSKU=ndb.StringProperty()
 	SKU=ndb.StringProperty()
+	pStatus=ndb.StringProperty()
 	dateCreated=ndb.DateTimeProperty(auto_now_add=True)
 	dateModified=ndb.DateTimeProperty(auto_now=True)
 	modifiedBy=ndb.KeyProperty()
 
-class ProductFixedAttributes(ndb.Model):
-	attrName=ndb.StringProperty()
-	attrType=ndb.StringProperty()
-	attrReqd=ndb.BooleanProperty()
-	attrMinLen=ndb.IntegerProperty()
-	attrMaxLen=ndb.IntegerProperty()
 
-class ProductAttribQuery():
-	def getAllAttribs(self):
-		attrQuery=ProductFixedAttributes.query()
-		if attrQuery.count()>0:
-			return(attrQuery.fetch())
-		else:
-			return(None)
+		
+class ProductImageQuery():
+	def getAllImages(self):
+		
+
 		
 class ProductQuery():
 	def getAllProducts(self):
