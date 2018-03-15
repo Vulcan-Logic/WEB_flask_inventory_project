@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/static/css/Footer-Basic.css">
 </head>
 
-<body onLoad="pageLoadAction()">
+<body>
     <div>
         <nav class="navbar navbar-default navigation-clean-button">
             <div class="container">
@@ -295,6 +295,7 @@
 				            		Product Name:
 				            	</label>
 				            	<input class="form-control" 
+				            	required="true"
 				            	form="formProduct"
 				            	type="text" id="pName"
 				            	name="pName">
@@ -307,6 +308,8 @@
 				            	</label>
 				            	<input class="form-control" 
 				            	form="formProduct"
+				            	required="true"
+				            	readonly
 				            	type="text" id="pSku"
 				            	name="pSku">
 				            </div>
@@ -657,6 +660,8 @@
     <script src="/static/bootstrap/js/bootstrap.min.js"></script>
     <script src="/static/js/caman.full.min.js"></script>
     <script src="/static/js/addType.js"></script>
+    
+
 
 </body>
 

@@ -128,6 +128,20 @@ def types(typePage):
             #error - no results from logic layer
                 raise Exception(500,"Server Error")
             return(response)
+        elif typePage=="getTypeCounter":
+            #get request arguments
+            keyUrl=request.args.get('kId')
+            #get results from logic layer
+            retList=catT.getCounterValue(keyUrl)
+            #prepare response            
+            if retList is not None:
+                response=make_response(retList)
+                response.headers['Content-Type'] = 'text/json'
+                response.status_code = 200
+            else:
+            #error - no results from logic layer
+                raise Exception(500,"Server Error")
+            return(response)
         else:
         #error page not found
             raise Exception(404,"Page Not found")

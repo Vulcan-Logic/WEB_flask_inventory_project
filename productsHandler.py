@@ -1,6 +1,7 @@
 from templating import Handler1
 from dbProduct import ProductQuery
 from dbProductType import TypeQuery
+import logging
 
 class addProduct():
 	def get(self,user=None):
@@ -10,10 +11,21 @@ class addProduct():
 		else:
 			return(None)
 	
+	def put(self,pKey,pName,pSku,prodDesc,pFieldList,pImageList,
+		modifiedBy):
+		try:
+			retVal=ProductQuery().put(pKey,pName,pSku,prodDesc,\
+			pFieldList,	pImageList, modifiedBy)
+			#add retVal to admin log file, for now print it out
+			print(retVal)
+		except Exception as e:
+			logging.exception(e)
+			raise Exception(500,"Server Error:Unable to insert new product") 
+	
 class listProductsHandler(Handler1):
 	def get(self):
 		message=None
-		products=ProductQuery().getAllProducts()
+		products=ProductQuery().get()
 		print(products)
 		if (products is None):
 			message="No Products Found" 
@@ -31,11 +43,11 @@ class listProductsHandler(Handler1):
 class skuHandler(Handler1):
 	def get(self):
 		message=None
-		pKey=self.request.get('product')
+		pSku=self.request.get('product')
 		#print("product key in urlsafe mode :")
 		#print(pKey)
-		if pKey.strip() != "":
-			product=ProductQuery().getProduct(key=pKey)
+		if pSku.strip() != "":
+			product=ProductQuery().getProduct(sku=pSku)
 			#print("product 0 is")
 			#print(product[0])
 			if product is not None:

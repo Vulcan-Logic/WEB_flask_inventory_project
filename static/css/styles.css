@@ -39,6 +39,10 @@ input:focus {
 	padding-right:12px;
 }
 
+ul.inline {
+	display:inline;
+}
+
 #divFormProduct.disabled{
 	opacity:0.5;
 }
@@ -50,3 +54,18 @@ input:focus {
 .prodCanvas {
 	border:1px solid #d3d3d3;
 }
+
+
+ul#pImages{
+    list-style-type:none;
+    white-space:nowrap;
+    overflow-x:auto;
+}
+
+li{
+    display:inline;
+}
+
+
+
+

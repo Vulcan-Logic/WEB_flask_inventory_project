@@ -178,7 +178,31 @@ class TypeQuery():
     def getTypeByKey(self,key=None):
         if key is not None:
             return(key.get())
-    
+        
+    def getCounterByKey(self,key=None):
+        if key is not None:
+            key=ndb.Key(urlsafe=key)
+            tType=key.get()
+            if tType:
+                return(tType.counter)
+            else:
+                err="Server Error:unable to get counter from DB"
+                raise Exception("500",err)
+        else: 
+            raise Exception("500","Server Error: Invalid Key for get counter")
+
+    def setTypeCounterByKey(self,key=None):
+        if key is not None:
+            key=ndb.Key(urlsafe=key)
+            tType=key.get()
+            counter=tType.counter+1
+            tType(counter=counter)
+            tType.put()
+            return(counter)
+        else:
+            raise Exception("500", \
+            "Server Error: Invalid Key for set counter")
+
     def getChildTypesByKey(self,key=None):
         #key in url safe mode, level int 
         if key is not None and key!="0": 

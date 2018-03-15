@@ -28,7 +28,7 @@ class catType():
                 retString="" 
             retList=json.dumps({"count":retCount,"list":retString})  
         else:
-            raise Exception(500,"Server Error")            
+            raise Exception(500,"Server Error: Unable to insert type")            
         return(retList)
     
     def checkDesc(self,parentId,desc):
@@ -56,13 +56,16 @@ class catType():
                 retString="" 
             retList=json.dumps({"count":retCount,"list":retString})  
         else:
-            raise Exception(500,"Server Error")
+            raise Exception(500,"Server Error: Unable to get types")
         return(retList)
 
 
-
-
-
+    def getCounterValue(self,keyUrl):
+        counter=TypeQuery().getCounterByKey(keyUrl)
+        if counter is not None:
+            return(json.dumps({"counter":counter}))
+        else:
+            raise Exception(500,"Server Error: Unable to return counter value")
 
 
     

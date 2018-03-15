@@ -17,8 +17,17 @@ var typeBCArray=[];
 var selectedType={typeId:"0",typeDesc:"",typeCode:"",typeLevel:0};
 var checkCodeResponse=false;
 var checkDescResponse=false;
+var chosenImageFiles=null;
+var catImageFileName=null;
+var catImageSrc=null;
+var imageSrcList=[];
+
+
+$(document).ready(pageLoadAction());
+
 
 function pageLoadAction(){
+	resetProductForm();
 	//run first time when page is loaded
 	//with appropriate data from the server
 	var select1 = document.getElementById("typeSelector");
@@ -57,6 +66,7 @@ function pageLoadAction(){
 		//show the add types form
 		//enable the elements of the form
 		activateAddTypeSection("Add Main Type");
+		
 	}
 }
 
@@ -388,15 +398,17 @@ function addTypeAct(){
 	var newDesc = document.getElementById("typeDescription");
 	var newCode = document.getElementById("typeCode")
 	var xhttp = new XMLHttpRequest();
-	var requestString="parentId=";
+	var requestString="/types/insertType?parentId=";
 	requestString=requestString.concat(selectedId);
 	requestString=requestString.concat("&Desc=");
 	requestString=requestString.concat(newDesc.value.trim());
 	requestString=requestString.concat("&Code=");
 	requestString=requestString.concat(newCode.value.trim());
+	requestString=requestString.concat("&filename=");
+	requestString=requestString.concat(catImageFileName);
 	console.log("AddType");
 	console.log("request string is " + requestString);
-	xhttp.open("POST", "/types/insertType", true);
+	xhttp.open("POST", requestString, true);
 	xhttp.onreadystatechange =  function(){
 		if (this.readyState == 4 && this.status == 200){
 			var dataFrmSvr = JSON.parse(this.responseText);
@@ -430,8 +442,13 @@ function addTypeAct(){
 		}
 	};
 	xhttp.setRequestHeader("Content-type", 
-			               "application/x-www-form-urlencoded");
-	xhttp.send(requestString); 
+			               "multipart/form-data");
+	if (catImageFileName!=null){
+		xhttp.send(catImageSrc);
+	}
+	else {
+		xhttp.send();
+	}
 }
 
 function displayError(elm,err){
@@ -602,7 +619,14 @@ function resetProductForm(){
 	document.getElementById("2attrValue").value="";
 	document.getElementById("3attrValue").value="";
 	document.getElementById("4attrValue").value="";
-	document.getElementById("prodImageDesc").value="";
+	document.getElementById("mainImage").value="";
+	document.getElementById("otherImages").value="";
+	document.getElementById("catImage").value="";
+	document.getElementById("prodCanvas").value="";
+	document.getElementById("catCanvas").value="";
+	$("#mainImage").attr("hidden","hidden");
+	$("#otherImages").attr("hidden","hidden");
+	
 }
 
 function resetTypeForm(){
@@ -610,14 +634,54 @@ function resetTypeForm(){
 	document.getElementById("typeCode").value="";
 }
 
-function generateSKU() {
-	//go thru breadcrumbs and make a SKU, set the SKU
+function skuButtonAct(){
+	console.log("firing")
+	$("#pSku").removeAttr("readonly");
+	$("#pSku").focus();
 }
 
-function finishButtonAct(){
-	activateProductForm();
-	document.getElementById("fieldsProduct").disabled=false;
-	generateSKU();
+function pSkuAct(){
+	$("#pSku").attr("readonly","readonly");
+}
+
+function finishButtonAct() {
+	//go thru breadcrumbs and make a SKU, set the SKU
+	var tId;
+	var tCode;
+	var retString="";
+	bcListLen=typeBCArray.length;
+	for (ctr in typeBCArray){
+		bcEntry=typeBCArray[ctr];
+		tId=bcEntry.sId;
+		tCode=bcEntry.sCode;
+		retString=retString.concat(tCode);
+		if (ctr<bcListLen){
+			retString=retString.concat('-');
+		}
+	}
+	//ajax request to get counter
+	var selectedId=tId;
+	var requestString="/types/getTypeCounter?kId=";
+	requestString=requestString.concat(selectedId);
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function (){
+		 if (this.readyState == 4 && this.status == 200){
+			 	var svrResponse= JSON.parse(this.responseText);
+			 	var counter=svrResponse.counter;
+			 	counter=Number(counter+1);
+			 	retString=retString.concat(counter);
+			 	console.log(retString);
+				console.log(tId);
+				activateProductForm();
+				document.getElementById("fieldsProduct").disabled=false;
+				document.getElementById("pSku").value=retString;
+		 }
+		 else if (this.readyState == 4 && this.status == 500){
+			 alert("Server Error: Unable to compute SKU");
+		 }
+	};
+	xhttp.open("GET",requestString, true);
+	xhttp.send();
 }
 
 function attrDescBtnAct(index){
@@ -648,44 +712,191 @@ function refocus(elm) {
     }
 }
 
-//need to change this into a different js file
+function validateAndDisplaySub1(src,file){
+	var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
+    if (regex.test(file.name.toLowerCase())) {
+    	//check if first file and add it to the canvas
+        canvas=document.getElementById("prodCanvas");
+        Caman(canvas, src, function () {
+		        // manipulate image here
+		            this.resize({
+			        width: 480,
+			        height: 270
+		            });
+		            // You still have to call render!
+		            this.render();		  				            
+	    //end caman function        
+	    });
+        //for sending image as a post request
+        //postPicture(file.name,src);
+    //end if filename test
+    }
+    else {
+        alert(file.name + " is not a valid image file.");
+        return false;
+    //end else filename test   
+    }
+}
 
-function validateAndDisplay(){
+function validateAndDisplaySub2(src,file){
+	var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
+	 if (regex.test(file.name.toLowerCase())) {
+    	//not the first image file - add to list
+		tUl=document.getElementById('pImages'); 
+    	tImg=document.createElement('img');
+		tImg.setAttribute('src',src);
+		tImg.setAttribute('width','160');
+		tImg.setAttribute('height','90');
+    	console.log(tImg);
+    	tli=document.createElement('li');
+    	tli.setAttribute('float','left');
+    	tli.appendChild(tImg);
+    	tUl.appendChild;
+    }
+    else {
+        alert(file.name + " is not a valid image file.");
+        return false;
+    //end else filename test   
+    }
+}
+
+function validateAndDisplaySub3(src,file){
+	var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
+    if (regex.test(file.name.toLowerCase())) {
+    	//check if first file and add it to the canvas
+        canvas=document.getElementById("catCanvas");
+        Caman(canvas, src, function () {
+		        // manipulate image here
+		            this.resize({
+			        width: 480,
+			        height: 270
+		            });
+		            // You still have to call render!
+		            this.render();		  				            
+	    //end caman function        
+	    });
+        //for sending image as a post request
+        catImageFileName=file.name;
+        catImageSrc=src;
+        //postPicture(file.name,src);
+    //end if filename test
+    }
+    else {
+        alert(file.name + " is not a valid image file.");
+        return false;
+    //end else filename test   
+    }
+}
+
+function validateAndDisplayMain(){
+	$("#mainImageDiv").removeAttr("hidden");
 	if (typeof (FileReader) != "undefined") {
-		chooseImage=document.getElementById("chooseImage");
-        var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
-        for (var i = 0; i < chooseImage.files.length; i++) {
-            var file = chooseImage.files[i];
+		chooseImage=document.getElementById("mainImage");
+        var noFiles=chooseImage.files.length;
+        for (var i = 0; i < noFiles; i++) {
+        	var file = chooseImage.files[i];
             var reader = new FileReader();
             reader.onload = function (e) {
-                var src = reader.result;
-                if (regex.test(file.name.toLowerCase())) {
-                        console.log(file.name);
-                        canvas=document.getElementById("prodCanvas");
-			            Caman(canvas, src, function () {
-  				        // manipulate image here
-  				            this.resize({
-    					        width: 480,
-    					        height: 270
-  				            });
-  				            // You still have to call render!
-  				            this.render();
-				        });
-			            //for sending image as a post request
-			            //postPicture(file.name,src);
-       		    }
-		        else {
-                    alert(file.name + " is not a valid image file.");
-                    return false;
-                }
+            validateAndDisplaySub1(reader.result,file);
+            //end function reader onload callback   
             };
-            reader.readAsDataURL(file);
+	        //end for loop    
         }
+            //reader read image file
+        reader.readAsDataURL(file);
+    //end main if file-reader condition  
     }
     else {
         alert("This browser does not support HTML5 FileReader.");
     }
 }
+
+function validateAndDisplayImage(){
+	$("#otherImagesDiv").removeAttr("hidden");
+	var filectr=0;
+    var tUl=$("#pImages");
+	var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp)$/;
+	if (typeof (FileReader) != "undefined") {
+		files=document.getElementById("otherImages").files;
+        var filesArr = Array.prototype.slice.call(files);
+        filesArr.forEach(function(file) {
+        //var noFiles=chooseImage.files.length;        
+        //for (var i = 0; i < noFiles; i++) {
+            var reader = new FileReader();
+        	reader.onload = function (e) {
+        		 if (regex.test(file.name.toLowerCase())) {
+        			 //read all this stuff into an array and then display it.
+        			 	console.log(reader.result);
+        		    	imageSrcList.push(reader.result);
+        		    	filectr++;
+        		    	console.log("adding");
+        		    	console.log(filectr);
+        		    	tImg=document.createElement('img');
+    					tImg.setAttribute('src',reader.result);
+    					tImg.setAttribute('width','160');
+    					tImg.setAttribute('height','90');
+    					tli=document.createElement('li');
+    					tli.append(tImg);
+    					tUl.append(tli);
+        		    }
+        		    else {
+        		        alert(file.name + " is not a valid image file.");
+        		        return false;
+        		    //end else filename test   
+        		    }
+            //end function reader onload callback   
+            };
+            //reader read image file
+            reader.readAsDataURL(file);
+        //end main for loop for all files       
+        });
+    //end main if file-reader condition  
+    }
+    else {
+        alert("This browser does not support HTML5 FileReader.");
+    }
+	//process the image array here and all images to the file
+//		 if (filectr==noFiles){
+//				console.log(imageSrcList);
+//				console.log(imageSrcList.length);
+//				for (ctr in imageSrcList){
+//					console.log("processing file");
+//					console.log(ctr);
+//					tImg=document.createElement('img');
+//					tImg.setAttribute('src',imageSrcList[ctr]);
+//					tImg.setAttribute('width','160');
+//					tImg.setAttribute('height','90');
+//					tli=document.createElement('li');
+//					tli.append(tImg);
+//					tUl.append(tli);
+//				}
+//		 }
+}
+
+function validateAndDisplayCat(){
+	$("#catImageDiv").removeAttr("hidden");
+	if (typeof (FileReader) != "undefined") {
+		chooseImage=document.getElementById("catImage");
+        var noFiles=chooseImage.files.length;
+        for (var i = 0; i < noFiles; i++) {
+        	var file = chooseImage.files[i];
+            var reader = new FileReader();
+            reader.onload = function (e) {
+            	validateAndDisplaySub3(reader.result,file);
+            //end function reader onload callback   
+            };
+	        //end for loop    
+         }
+            //reader read image file
+         reader.readAsDataURL(file);
+    //end main if file-reader condition  
+    }
+    else {
+        alert("This browser does not support HTML5 FileReader.");
+    }
+}
+
+//obsolete
 
 function postPicture(fileName,src){
 	console.log("in post request");
@@ -745,7 +956,7 @@ function submitAction2(fd){
 	xhttp.send(fd); 
 }
 
-//obsolete
+
 function checkCode(){
 	var newCode = document.getElementById("typeCode");
 	console.log("New Code is:");

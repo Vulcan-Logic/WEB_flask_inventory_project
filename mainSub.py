@@ -5,6 +5,8 @@ import mimetypes
 import base64
 import os
 import logging
+import datetime
+from productsHandler import addProduct
 
 
 def gcsFunction1(fileName=None,data=None):
@@ -39,24 +41,41 @@ def gcsFunction1(fileName=None,data=None):
     return(True)
 
 def gcsFunction2(request):
+    #forgot the type parent key?-------
+    pKey=request.form.get("pKey")
     pName=request.form.get("pName")
     pSku=request.form.get("pSku")
     prodDesc=request.form.get("prodDesc")
-    prodImageDesc=request.form.get("prodImageDesc")
     noAttr=request.form.get("noAttr")
-    for file in request.files:
-        fileCont=request.files[file]
-        gcsWrite(fileCont)
+    #change this to user id
+    modifiedBy=None  
+    pFieldList=[]
+    pImageList=[]
+    if len(request.files>0):
+        for tFile in request.files:
+            fileCont=request.files[tFile]
+            filename,fileName=gcsWrite(fileCont,pSku)
+            if filename is not None: 
+                pImageEnt={"imageName":fileName,"fileLocation":filename}
+                pImageList.append(pImageEnt)
+    else:
+        pImageList=None
     noAttr=int(noAttr)
     for ctr in range(1,noAttr+1):
         attrDesc=str(ctr)+"attrDesc"
         attrValue=str(ctr)+"attrValue"
         attrDescVal=request.form.get(attrDesc)
         attrValueVal=request.form.get(attrValue)
-# save all attributes in datastore
-    return(True)
+        pFieldEnt={"fieldName":attrDescVal,"fieldValue":attrValueVal}
+        pFieldList.append(pFieldEnt)
+    try:
+        addProduct.put(pKey,pName,pSku,prodDesc,pFieldList, 
+        pImageList, modifiedBy)
+    except Exception as e:
+        logging.exception(e)
+        raise 
         
-def gcsWrite(fileCont):
+def gcsWrite(fileCont,pSku):
     my_default_retry_params = gcs.RetryParams(initial_delay=0.2,
                                           max_delay=5.0,
                                           backoff_factor=2,
@@ -65,8 +84,10 @@ def gcsWrite(fileCont):
     bucket_name = os.environ.get('BUCKET_NAME',
                        app_identity.get_default_gcs_bucket_name())
     bucket = '/' + bucket_name
+    now=datetime.datetime.now()
     fileName=secure_filename(fileCont.filename)
-    filename = bucket + '/'+fileName
+    fileName1=pSku+now.isoformat()+fileName
+    filename = bucket + '/'+fileName1
     content_t=fileCont.mimetype
     write_retry_params = gcs.RetryParams(backoff_factor=1.1)
     try:
@@ -80,7 +101,7 @@ def gcsWrite(fileCont):
     except Exception as e:
         logging.exception(e)
         raise Exception(500,"Server Error") 
-    return(True)
+    return(filename,fileName)
     
     
     
