@@ -51,10 +51,13 @@ ul.inline {
 	opacity:1;
 }
 
-.prodCanvas {
+#prodCanvas {
 	border:1px solid #d3d3d3;
 }
 
+#catCanvas {
+	border:1px solid #d3d3d3;
+}
 
 ul#pImages{
     list-style-type:none;
@@ -66,6 +69,23 @@ li{
     display:inline;
 }
 
+label.control-label{
+	padding:5px 0px 0px 0px;
+}
 
+label.type2{
+	padding:0px 0px 0px 16px;
+}
 
+.type{
+	margin:5px -15px 5px -15px;
+}
+
+.type3{
+	padding:5px 0px 0px 10px;
+}
+
+.type4{
+	padding:5px 0px 0px 15px;
+}
 

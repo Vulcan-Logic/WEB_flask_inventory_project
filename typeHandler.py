@@ -4,13 +4,14 @@ Created on 22-Dec-2017
 @author: vineet
 '''
 from templating import Handler1
-from dbProductType import TypeQuery
+from dbProductType import TypeQuery, ProductTypeAttribQuery
 import json
 import datetime
 
     
 class catType(): 
     def put(self,parentKey,typeCode,typeDesc):
+        #stores the catType in product type database
         retList=None
         if parentKey!="0":
                 returnVal=TypeQuery().addType(typeCode=typeCode,
@@ -37,15 +38,16 @@ class catType():
             return(True)
         else:
             return(False)
-    #returns true if code does not exist
+    
     def checkCode(self,parentId,code):
+        #returns true if code does not exist
         if TypeQuery().checkCode(parentId,code):
             return(True)
         else:
             return(False)
 
     def getChildList(self,keyUrl):
-        #return json 
+        #return json of all types children of this parent type
         types=TypeQuery().getChildTypesByKey(key=keyUrl)
         retList=None
         if types is not None:
@@ -59,15 +61,31 @@ class catType():
             raise Exception(500,"Server Error: Unable to get types")
         return(retList)
 
+    def getAttribsAndCounter(self,keyUrl):
+        #returns json of counter and attributes of this type
+        retList=None
+        attribs=ProductTypeAttribQuery().get(keyUrl)
+        counter=TypeQuery().getCounterByKey(keyUrl)
+        if counter is not None and attribs is not None:
+            retCount=len(attribs)
+            if retCount!=0:
+                retString=json.dumps(attribs)
+            else: 
+                retString="" 
+            retList=json.dumps({"counter":counter,"list":retString})
+            return(retList)
+        else:
+            raise Exception(500,
+                "Server Error: Unable to fetch attributes or counter value")
 
     def getCounterValue(self,keyUrl):
+        #return json of counter for this type
         counter=TypeQuery().getCounterByKey(keyUrl)
         if counter is not None:
             return(json.dumps({"counter":counter}))
         else:
             raise Exception(500,"Server Error: Unable to return counter value")
-
-
+        
     
 #obsolete or not used
 class initialAddtype(Handler1):

@@ -1,0 +1,343 @@
+  <!--  Product section -->
+    <div class="container">
+	    <div class="disabled" id="divFormProduct">
+	        <div class="row">
+	            <div class="col-md-12" style="height:40px;">
+	                <h4 class="text-center" style="margin:12px 0px;">
+	                	Add a new product
+	                </h4>
+	            </div>
+	        </div>
+	        <form id="formProduct" enctype="multipart/form-data" method="post">
+		        <fieldset id ="fieldsProduct" disabled>
+		        	<div class="row">
+			        	<div class="col-md-6">
+				            <div class="form-group">
+				            	<label class="control-label">
+				            		Product Name:
+				            	</label>
+				            	<input class="form-control" 
+				            	required="true"
+				            	form="formProduct"
+				            	type="text" id="pName"
+				            	name="pName">
+				            </div>
+			            </div>
+			            <div class="col-md-4">
+				            <div class="form-group">
+				            	<label class="control-label">
+				            		SKU
+				            	</label>
+				            	<input class="form-control" 
+				            	form="formProduct"
+				            	required="true"
+				            	readonly
+				            	type="text" id="pSku"
+				            	name="pSku"
+				            	onblur="pSkuAct()">
+				            </div>
+				        </div>
+				        <div class="col-md-2">
+				            <button class="btn btn-default" 
+			                		type="button"
+			                		id = "skuButton"
+			                		onClick="skuButtonAct()">
+			                	Change SKU
+			                </button>	            
+				        </div>    
+					</div>
+		       		
+		            <div class="row">
+		                <div class="col-md-12">
+		                    <div class="form-group">
+		                    	<label class="control-label" 
+		                    		   id="labelProdDesc">
+		                    		Product Description
+		                    	</label>
+		                    	<textarea class="form-control"
+		                    	form="formProduct" 
+		                    	id="prodDesc"
+								required="true"
+		                    	name="prodDesc">
+		                    	</textarea>
+		                    </div>
+		                </div>
+		            </div>
+		
+		            <div class="row attrRow">
+		            	<div class="form-group">
+			                <div class="col-md-2">
+				  	      		<label class="control-label">
+					      			1. Attribute Description
+					       		</label>
+							</div>	
+							<div class="col-md-4">
+				     	    	<div class="input-group">
+					    	    	<input class="form-control" type="text"
+					    	    			form="formProduct"
+					    	    	       id="1attrDesc" value="Weight" 
+					    	    	       onChange="attrValueSet(1)"
+					    	    	       name="1attrDesc"
+					    	    	       readonly>
+				            		    <div class="input-group-btn">
+				                    	    <button class="btn btn-default" 
+				                    	    type="button" 
+				                    	    id="1attrDescBtn" 
+				                    	    onClick="attrDescBtnAct(1)">
+				                        		Change
+				                        	</button>
+				                        </div>
+				                </div>
+							</div>
+		                	<div class="col-md-1">
+			                   	<label class="control-label">
+				                	Value 
+				                </label>
+			                </div>
+			                <div class="col-md-5">
+			                	<input class="form-control" 
+			                	form="formProduct"
+			                	type="text" id="1attrValue"
+			                	name="1attrValue">
+		                	</div>
+		            	</div>
+		       		</div>
+		    
+		            <div class="row attrRow">
+		            	<div class="form-group">
+			                <div class="col-md-2">
+				  	      		<label class="control-label">
+					      			2. Attribute Description
+					       		</label>
+							</div>	
+							<div class="col-md-4">
+				     	    	<div class="input-group">
+					    	    	<input class="form-control" type="text"
+					    	    		   form="formProduct"
+					    	    	       id="2attrDesc"
+					    	    	       name="2attrDesc"
+					    	    	       value="Length(cm)"
+					    	    	       onChange="attrValueSet(2)" 
+					    	    	       readonly>
+				            		    <div class="input-group-btn">
+				                    	    <button class="btn btn-default" 
+				                    	    type="button" 
+				                    	    id="2attrDescBtn" 
+				                    	    onClick="attrDescBtnAct(2)">
+				                        		Change
+				                        	</button>
+				                        </div>
+				                </div>
+							</div>
+		                	<div class="col-md-1">
+			                   	<label class="control-label">
+				                	Value 
+				                </label>
+			                </div>
+			                <div class="col-md-5">
+			                	<input class="form-control"
+			                	form="formProduct" 
+			                	type="text" id="2attrValue"
+			                	name="2attrValue">
+		                	</div>
+		            	</div>
+		       		</div>
+		    
+		            <div class="row attrRow">
+		            	<div class="form-group">
+			                <div class="col-md-2">
+				  	      		<label class="control-label">
+					      			3. Attribute Description
+					       		</label>
+							</div>	
+							<div class="col-md-4">
+				     	    	<div class="input-group">
+					    	    	<input class="form-control" type="text"
+					    	    			form="formProduct"
+					    	    	       id="3attrDesc"
+					    	    	       name="3attrDesc"
+					    	    	       value="Depth(cm)"
+					    	    	       onChange="attrValueSet(3)" 
+					    	    	       readonly>
+				            		    <div class="input-group-btn">
+				                    	    <button class="btn btn-default" 
+				                    	    type="button" 
+				                    	    id="3attrDescBtn" 
+				                    	    onClick="attrDescBtnAct(3)">
+				                        		Change
+				                        	</button>
+				                        </div>
+				                </div>
+							</div>
+		                	<div class="col-md-1">
+			                   	<label class="control-label">
+				                	Value 
+				                </label>
+			                </div>
+			                <div class="col-md-5">
+			                	<input class="form-control"
+			                	form="formProduct" 
+			                	type="text" id="3attrValue"
+			                	name="3attrValue">
+		                	</div>
+		            	</div>
+		       		</div>
+		
+		            <div class="row attrRow">
+		            	<div class="form-group">
+			                <div class="col-md-2">
+				  	      		<label class="control-label">
+					      			4. Attribute Description
+					       		</label>
+							</div>	
+							<div class="col-md-4">
+				     	    	<div class="input-group">
+					    	    	<input class="form-control" type="text"
+					    	    			form="formProduct"
+					    	    	       id="4attrDesc"
+					    	    	       name="4attrDesc"
+					    	    	       value="Height(cm)"
+					    	    	       onChange="attrValueSet(4)" 
+					    	    	       readonly>
+				            		    <div class="input-group-btn">
+				                    	    <button class="btn btn-default" 
+				                    	    type="button" 
+				                    	    id="4attrDescBtn" 
+				                    	    onClick="attrDescBtnAct(4)">
+				                        		Change
+				                        	</button>
+				                        </div>
+				                </div>
+							</div>
+		                	<div class="col-md-1">
+			                   	<label class="control-label">
+				                	Value 
+				                </label>
+			                </div>
+			                <div class="col-md-5">
+			                	<input class="form-control" 
+			                	type="text" id="4attrValue"
+			                	name="4attrValue">
+		                	</div>
+		            	</div>
+		       		</div>
+		           
+		            <div class="row attrRow">
+		            	<div class="col-md-12 text-center">
+		            		<button class="btn btn-default" 
+			                		type="button"
+			                		id = "addAttrBtn"
+			                		onClick="addAttrAct()">
+			                	Add another attribute
+			                </button>	
+		            	</div>
+		       		</div>
+		
+					<div class="form-group"  hidden="True">
+						<input class="form-control" type="text"
+					    	    	      id="noAttr"
+					    	    	      name="noAttr" 
+					    	    	      value="4"
+					    	    	      form="formProduct">
+					</div>
+					          
+		            <div id="moreAttr">
+		       		</div>
+		       		
+		       		 <div class="row form-group">
+		                <div class="col-md-2" id="label17">
+		                  	<label for="mainImage">
+		                  	Choose Main Image: 
+		                  	</label>
+		                </div>
+		                <div class="col-md-4">
+		                	<span class="float-md-left">
+		                		<input type="file" id="mainImage"
+		                		name="mainImage"
+		                		form="formProduct"
+		                		accept="image/*" 
+		                		onChange="validateAndDisplayMain()"
+		                		>
+		                	</span>
+		                </div>
+		            </div>
+		 
+		            <div class="row form-group" id="mainImageDiv" hidden>
+		                <div class="col-md-2">
+			                <label for="prodCanvas">
+			                	Main Image: 
+			                </label>
+		                </div>
+		                <div class="col-md-7 text-center" id="prodImgCont">
+							<canvas id="prodCanvas" width="480" height="270">
+							</canvas>
+		                </div>
+			        </div>
+			        
+			        <div class="row form-group">
+		                <div class="col-md-2" id="label17">
+		                  	<label for="otherImage">
+		                  	Choose Other Images: 
+		                  	</label>
+		                </div>
+		                <div class="col-md-4">
+		                	<span class="float-md-left">
+		                		<input type="file" id="otherImages"
+		                		name="otherImages"
+		                		form="formProduct"
+		                		accept="image/*" 
+		                		multiple
+		                		onChange="validateAndDisplayImage()"
+		                		disabled
+		                		>
+		                	</span>
+		                </div>
+		            </div>
+		            
+		            <div class="row form-group" id="otherImagesDiv" hidden>
+		                <div class="form-group">
+		                    <div class="col-md-2">
+		                    	<label class="control-label" 
+		                    	       id="labelImageDesc">
+		                    		Other Images:
+		                    	</label>
+		              		</div>
+		                    <div class="col-md-10 otherImgCont">
+		                    		<ul id="pImages">
+		                    		</ul>
+
+		                    </div>
+		                </div>
+		            </div>
+		 	        
+		            <div class="row form-group">
+		                <div class="col-md-4 text-center">
+		                	<button class="btn btn-default" 
+		                			type="button" 
+		                			id="prodReset"
+		                			form="formProduct"
+		                			onClick="resetProductForm()">
+		                		Reset Form
+		                	</button>
+		                </div>
+		                 <div class="col-md-4 text-center">
+		                	<button class="btn btn-default" 
+		                			type="button" 
+		                			id="prodCancel"
+		                			form="formProduct"
+		                			onClick="document.location.href='/';">
+		                		Cancel and Return to Admin Menu
+		                	</button>
+		                </div>
+		                <div class="col-md-4 text-center">
+			                <button class="btn btn-default" 
+			                		type="submit" 
+			                		form="formProduct"
+			                		id="prodAdd">
+			                	Add product to Database
+			                </button>
+		                </div>
+		            </div>
+		        </fieldset>     
+	        </form>
+        </div>

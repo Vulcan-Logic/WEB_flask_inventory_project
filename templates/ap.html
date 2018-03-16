@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+{% block content %}
+<body> 
+   {% include "base_header.html" %}
+   <div class="container" id="add_product_category">
+        <div class="row">
+            <div class="col-md-12" style="height:40px;">
+                <h4 class="text-center" style="margin:12px 0px;">
+                Add New Product Page
+                </h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2" style="height:40px;">
+                <h5 style="margin:12px 0px;">
+                Current Category
+                </h5>
+            </div>
+            <div class="col-md-1" style="height:40px;" id="noneLabel">
+                <p style="margin:9px 0px;">
+                NONE 
+                </p>
+            </div>
+            <div class="col-md-7" style="height:40px;" 
+            	 id="bcDiv" 
+            	 hidden="true">
+               <ol class="breadcrumb" id="typeBC">
+               </ol>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3" style="height:40px;">
+                <h5 style="margin:12px 0px;">
+                Choose Category or Add New Sub-Type
+                </h5>
+            </div>
+            <div class="col-md-6" style="height:40px;" id="divSel">
+            	<select name="typeSelector"
+	                    		id="typeSelector"
+	                    		onChange="typeSelectorAction()"
+	                    		tabindex="1"
+	                 			>
+	            	<option value="0" data-value="0" data-value2=0"
+	                        selected>
+	                None Selected
+	                </option>
+	                <option value="1" data-value="1" data-value2="0">
+	                Add New Category/Type
+	                </option>
+{% if cont %}
+  	{% for pItem in sData %}
+					<option value="{{pItem.key}}" 
+							data-value="{{pItem.typeCode.strip()}}"
+							data-value2="{{pItem.level}}">
+					{{pItem.typeDefinition.strip()}}
+					</option>
+	{% endfor %}
+{% endif %}
+				</select>
+            </div>
+            <div class="col-md-3">
+                 	<button class="btn btn-default" type="button"
+                        	id="startOverButton"
+                        	onClick="startOverAction()"
+							tabindex="-1"
+                        	disabled>
+                   	Start Over
+                  	</button>
+            </div>
+        </div>
+        <div class="row">
+         	<div class="col-md-12 text-center">
+                 	<button class="btn btn-default" type="button"
+                        	id="finishButton"
+                        	tabindex="2"
+                        	onClick="finishButtonAct()" disabled>
+                   	Finished with choosing category, Enter product details
+                  	</button>
+            </div>
+        </div>
+         <div class="row" id="selMsgDiv">
+			<p id="typeSelectMessage"> </p>    
+         </div>
+    </div>
+    
+    <div class="container" id="addTypeForm">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 id="typeAddDivMessage">
+                Add a Type or Sub Type
+                </h4>
+            </div>
+        </div>
+        <form>
+            <div class="row type">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <div class="col-md-2">
+	                        <label class="control-label">
+	                        Type Description:
+	                        </label>
+                        </div>
+                        <div class="col-md-7">
+                        <input class="form-control" 
+                        		type="text" 
+                        		required="true"
+                        		name="typeDescription"
+                        		id="typeDescription" 
+                        		onChange=checkDescAct() 
+                        		tabindex="2"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row type" id="divDescMsg" hidden>
+                 <div class="col-md-12">
+	                 <div class="col-md-2">
+	                 </div>
+	                 <div class="col-md-10" >
+	                            <p id="pDescMsg">
+	                            </p>
+	                 </div>
+	         	</div>
+            </div>    
+            <div class="row type">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <div class="col-md-2">
+	                        <label class="control-label">
+	                        Type Code:
+	                        </label>
+                        </div>
+                        <div class="col-md-2">
+	                        <input class="form-control" 
+	                        		type="text" 
+	                        		required="true" 
+	                        		maxlength="3" 
+	                        		minlength="3" 
+	                        		style="width:80px;"
+	                        		name="typeCode"
+	                        		id="typeCode" 
+	                        		tabindex="3"
+	                        		onChange="checkCodeAct()"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row type" id="divCodeMsg" hidden>
+                 <div class="col-md-2">
+                 </div>
+                 <div class="col-md-10">
+                            <p id="pCodeMsg">
+                            </p>
+                 </div>
+            </div>    
+            <div class="row type" id="divTypeMsg" hidden="true">
+	            <div class="col-md-12 form-group">
+		            <p style="padding:5px 0px 0px 5px;" id="divTypeMsg">
+			        </p>
+		        </div>
+	        </div>
+	        
+	        <div class="row type form-group">
+                <div class="col-md-2" id="label17">
+                  	<label class="control-label type2" for="mainCatImage">
+                  	Main Image: 
+                  	</label>
+                </div>
+                <div class="col-md-4">
+                	<span class="float-md-left">
+                		<input class="type3" type="file" id="catImage"
+                		name="catImage"
+                		accept="image/*"
+                		onChange="validateAndDisplayCat()"
+                		>
+                	</span>
+                </div>
+    		</div>
+	            
+            <div class="row type form-group" id="catImageDiv" hidden>
+                <div class="col-md-2">
+	                <label class="control-label type2" for="catCanvas">
+	                	Image 
+	                </label>
+                </div>
+                <div class="col-md-7 text-center type4" id="catImg">
+					<canvas id="catCanvas" width="480" height="270">
+					</canvas>
+                </div>
+		   </div>
+		   
+              <div class="col-md-12">
+                    <div class="form-group">
+                        <div class="col-md-6">
+                        	<button class="btn btn-default" type="button"
+                        	id="submitAddTypeFormButton" disabled
+                        	onClick="addTypeAct()"
+                        	tabindex="4"> 
+                        	Add Type
+                        	</button>
+                        </div>
+                        <div class="col-md-2" style="height:40px;">
+            				<button class="btn btn-default" type="button" 
+                    			style="height:30px;font-size:14px;
+                    				   margin:3px 0px;"
+                    			id="cancelNewTypeButon"
+                    			tabindex="5"
+                    			onClick="cancelNewTypeButtonAction()">
+                    		Cancel 
+                    		</button>
+            			</div>
+                    </div>
+                </div>
+        </form>
+    </div>
+	{% include "add_product_form.html" %}
+	{% include "base_footer.html" %}
+	{% include "add_product_scripts.html" %}
+</body>
+{% endblock %}
+    

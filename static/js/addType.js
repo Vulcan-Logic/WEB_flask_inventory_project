@@ -28,6 +28,7 @@ $(document).ready(pageLoadAction());
 
 function pageLoadAction(){
 	resetProductForm();
+	resetCatForm();
 	//run first time when page is loaded
 	//with appropriate data from the server
 	var select1 = document.getElementById("typeSelector");
@@ -229,6 +230,7 @@ function startOverAction(){
 	deactivateAddTypeSection();
 	deactivateProductForm();
 	document.getElementById("finishButton").disabled=true;
+	resetCatForm();
 }
 
 function setBCArray(selectedId, selectedText){
@@ -299,7 +301,6 @@ function showBC(){
 		noneLabel.setAttributeNode(att);
 		var attr = bcDiv.getAttributeNode("hidden");
 		bcDiv.removeAttributeNode(attr);
-
 	}
 //remove old breadcrumbs
 	var bcDiv=document.getElementById("bcDiv");
@@ -322,7 +323,7 @@ function showBC(){
 		var atr = document.createAttribute('id');
 		atr.value="typeCrumb"+bcEntry.index;
 		opt.setAttributeNode(atr);
-		
+
 		var opt1 = document.createElement('a');
 		var atr1 = document.createAttribute('href');
 		atr1.value = "#";
@@ -578,6 +579,7 @@ function cancelNewTypeButtonAction(){
 	activateSelectSection();
 	document.getElementById("typeSelector").selectedIndex=0;
 	document.getElementById("finishButton").disabled=true;
+	resetCatForm();
 }
 
 function activateSelectSection(){
@@ -613,21 +615,40 @@ function deactivateProductForm(){
 
 function resetProductForm(){
 	document.getElementById("pName").value="";
-	document.getElementById("pSku").value="";
+//	document.getElementById("pSku").value="";
 	document.getElementById("prodDesc").value="";
+//the next should ideally be reset in a loop. 
 	document.getElementById("1attrValue").value="";
 	document.getElementById("2attrValue").value="";
 	document.getElementById("3attrValue").value="";
 	document.getElementById("4attrValue").value="";
 	document.getElementById("mainImage").value="";
 	document.getElementById("otherImages").value="";
-	document.getElementById("catImage").value="";
-	document.getElementById("prodCanvas").value="";
-	document.getElementById("catCanvas").value="";
-	$("#mainImage").attr("hidden","hidden");
-	$("#otherImages").attr("hidden","hidden");
-	
+	$("#prodImgCont").empty();
+	$("#prodImgCont").append(
+	"<canvas id=\"prodCanvas\" width=\"480\" height=\"270\"> </canvas>");
+	$("#otherImgCont").empty();
+	$("#otherImgCont").append("<ul id=\"pImages\"> </ul>");
+	$("#mainImageDiv").attr("hidden","hidden");
+	$("#otherImagesDiv").attr("hidden","hidden");
+	$("#otherImages").attr("disabled","disabled");
 }
+
+function resetCatForm(){
+	$("#typeDescription").val("");
+	$("#typeCode").val("");
+	$("#catImage").val("");
+	$("#catImg").empty();
+	$("#catImg").append(
+	"<canvas id=\"catCanvas\" width=\"480\" height=\"270\"> </canvas>");
+	$("#catImageDiv").attr("hidden","hidden");
+}
+
+function setProdAttribs(attribList){
+	//function to dynamically generate attributes in the form based on 
+	//values put forth by the getCatAttrib ajax function
+}
+
 
 function resetTypeForm(){
 	document.getElementById("typeDescription").value="";
@@ -659,7 +680,7 @@ function finishButtonAct() {
 			retString=retString.concat('-');
 		}
 	}
-	//ajax request to get counter
+	//ajax request to get counter and 
 	var selectedId=tId;
 	var requestString="/types/getTypeCounter?kId=";
 	requestString=requestString.concat(selectedId);
@@ -668,6 +689,7 @@ function finishButtonAct() {
 		 if (this.readyState == 4 && this.status == 200){
 			 	var svrResponse= JSON.parse(this.responseText);
 			 	var counter=svrResponse.counter;
+			 	var attribList=[];
 			 	counter=Number(counter+1);
 			 	retString=retString.concat(counter);
 			 	console.log(retString);
@@ -675,6 +697,7 @@ function finishButtonAct() {
 				activateProductForm();
 				document.getElementById("fieldsProduct").disabled=false;
 				document.getElementById("pSku").value=retString;
+				setProdAttribs(attribList);
 		 }
 		 else if (this.readyState == 4 && this.status == 500){
 			 alert("Server Error: Unable to compute SKU");
@@ -730,6 +753,7 @@ function validateAndDisplaySub1(src,file){
         //for sending image as a post request
         //postPicture(file.name,src);
     //end if filename test
+        $("#otherImages").removeAttr("disabled");
     }
     else {
         alert(file.name + " is not a valid image file.");

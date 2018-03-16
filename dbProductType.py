@@ -28,12 +28,28 @@ class ProductTypeFixedAttributes(ndb.Model):
 class ProductTypeAttribQuery():
     #need to pass parent category key to get attributes for this category
     def get(self,parentKey=None):
+        if parentKey is not None:
+            if parentKey=="0":
+                parentKey=ndb.Key('ProductType',"0")
+            else:
+                parentKey=ndb.Key(urlsafe=parentKey)
         attrQuery=ProductTypeFixedAttributes.query(parent=parentKey)
+        returnList=[]
         if attrQuery.count()>0:
-            return(attrQuery.fetch())
+            results=attrQuery.fetch()
+            for result in results:
+                listElement={ 
+                    'attrName': result.attrName,
+                    'required': result.attrReqd,
+                    'mnLen':result.attrMinLen,
+                    'mxLen':result.attrMaxLen
+                     }
+                returnList.append(listElement)
+            return(returnList)
         else:
-            return(None)    
+            return(None)
     #set attributes for this category of products    
+
     def set(self,default=True,attribList=None,parentkey=None):
         pass
 
