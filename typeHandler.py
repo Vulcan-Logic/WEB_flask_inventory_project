@@ -10,16 +10,18 @@ import datetime
 
     
 class catType(): 
-    def put(self,parentKey,typeCode,typeDesc):
+    def put(self,parentKey,typeCode,typeDesc,filename=None):
         #stores the catType in product type database
         retList=None
         if parentKey!="0":
                 returnVal=TypeQuery().addType(typeCode=typeCode,
                                    typeDefinition=typeDesc,
+                                   typeImageLoc=filename,
                                    parentKey=parentKey)
         else:
                 returnVal=TypeQuery().addType(typeCode=typeCode,
-                                   typeDefinition=typeDesc)
+                            typeDefinition=typeDesc, typeImageLoc=filename)
+        #check return value, prepare and return response in json string       
         if returnVal is not None:
             types=TypeQuery().getChildTypesByKey(key=parentKey)            
             retCount=len(types)

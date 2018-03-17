@@ -7,6 +7,7 @@ import os
 import logging
 import datetime
 from productsHandler import addProduct
+from typeHandler import catType
 
 
 def gcsFunction1(fileName=None,data=None):
@@ -37,7 +38,7 @@ def gcsFunction1(fileName=None,data=None):
         gcs_file.close()
     except Exception as e:
         logging.exception(e)
-        raise Exception(500,"Server Error") 
+        raise Exception(500,"Server Error:" + e) 
     return(True)
 
 def gcsFunction2(request):
@@ -51,10 +52,19 @@ def gcsFunction2(request):
     modifiedBy=None  
     pFieldList=[]
     pImageList=[]
+    print("files uploaded are")
+    print(len(request.files))
     if len(request.files>0):
         for tFile in request.files:
             fileCont=request.files[tFile]
-            filename,fileName=gcsWrite(fileCont,pSku)
+            try:
+                filename,fileName=gcsWrite(fileCont,pSku)
+            except Exception as e:
+                logging.exception(e)
+                raise
+            print("files written are")
+            print(filename)
+            print(fileName)
             if filename is not None: 
                 pImageEnt={"imageName":fileName,"fileLocation":filename}
                 pImageList.append(pImageEnt)
@@ -73,35 +83,87 @@ def gcsFunction2(request):
         pImageList, modifiedBy)
     except Exception as e:
         logging.exception(e)
-        raise 
+        raise Exception(500,"Server Error:" + e) 
         
-def gcsWrite(fileCont,pSku):
+def gcsWrite(cont,iden,cType="file",fileName=None):
+    #set storage parameters and options
     my_default_retry_params = gcs.RetryParams(initial_delay=0.2,
                                           max_delay=5.0,
                                           backoff_factor=2,
                                           max_retry_period=15)
     gcs.set_default_retry_params(my_default_retry_params)
+    #get the right storage folder 
     bucket_name = os.environ.get('BUCKET_NAME',
                        app_identity.get_default_gcs_bucket_name())
     bucket = '/' + bucket_name
+    #get the time for including in filename for uniqueness
     now=datetime.datetime.now()
-    fileName=secure_filename(fileCont.filename)
-    fileName1=pSku+now.isoformat()+fileName
+    #check content type: file or data and set the right parameters    
+    if cType=="file":
+        content_t=cont.mimetype
+        #secure filename
+        fileName=cont.filename
+    else:
+        #try to guess the data type based on data stream content
+        content_t=mimetypes.guess_type(cont)
+        #get only the data stream
+        cont=cont.split(',')[1]
+        #decode the data into proper format for image file
+        cont=base64.b64decode(cont)
+    #build the right filenames for storage to file system
+    fileName=secure_filename(fileName)
+    fileName1=iden+now.isoformat()+fileName
     filename = bucket + '/'+fileName1
-    content_t=fileCont.mimetype
+    #re-set storage write parameters     
     write_retry_params = gcs.RetryParams(backoff_factor=1.1)
+    #try to write data to storage
     try:
+        #open gcs file
         gcs_file = gcs.open(filename,
                     'w',
                     content_type=content_t,
                     options={'x-goog-meta-filename': fileName},
                     retry_params=write_retry_params)
-        gcs_file.write(fileCont.stream.read())
+        #check content type: file or data
+        if cType=="file":
+            #get file contents as data stream
+            gcs_file.write(cont.stream.read())
+        else:
+            #data is already in the right format
+            gcs_file.write(cont)
+        #close gcs file   
         gcs_file.close()
     except Exception as e:
         logging.exception(e)
-        raise Exception(500,"Server Error") 
+        raise Exception(500,str(e)) 
     return(filename,fileName)
+    
+def gcsFunction3(request):
+    parentKey=request.args.get("parentId")
+    typeDesc=request.args.get("Desc")
+    typeCode=request.args.get("Code")
+    typeImage=request.args.get("filename")
+    data=request.data
+    print("printing data")
+    print(data)
+    iden=typeCode
+    try:
+        if typeImage is not None:
+            filename,_=gcsWrite(data,iden,cType="data",
+                                       fileName=typeImage)
+            retList=catType().put(parentKey=parentKey,
+                                  typeDesc=typeDesc,
+                                  typeCode=typeCode,
+                                  filename=filename)
+        else:
+            retList=catType().put(parentKey=parentKey,
+                                  typeDesc=typeDesc,
+                                  typeCode=typeCode)
+        return(retList)
+    except Exception as e:
+        logging.exception(e)
+        raise Exception(500,str(e)) 
+    
     
     
     

@@ -97,12 +97,11 @@ def types(typePage):
             return(response)
         elif typePage=="insertType":
             if request.method=="POST":
-                #get request arguments
-                parentKey=request.args.get("parentId")
-                typeDesc=request.args.get("Desc")
-                typeCode=request.args.get("Code")
-                #get results from logic layer
-                retList=catT.put(parentKey,typeDesc,typeCode)
+                #get results from insert into db function
+                try:
+                    retList=gcsFunction3(request)
+                except Exception as e:
+                    raise e
                 #prepare response
                 if retList is not None:
                     response=make_response(retList)
@@ -110,7 +109,7 @@ def types(typePage):
                     response.status_code = 200
                 else:
                 #error - no results from logic layer
-                    raise Exception(500,"Server Error")
+                    raise Exception(500,"Server Error: No data")
                 return(response)
             else:
                 raise Exception(404,"Page Not Found")
@@ -148,7 +147,7 @@ def types(typePage):
     except Exception as e:
         x,y = e.args
         if x==500:
-            abort(500)
+            abort(500,y)
         elif x==404:
             abort(404)
         else:
@@ -156,7 +155,7 @@ def types(typePage):
         
 @app.errorhandler(500)
 def error500(e):
-    logging.exception('An error occurred during a request.')
+    logging.exception("Main block exception handler:"+ str(e))
     return """
     An internal error occurred: <pre>{}</pre>
     See logs for full stacktrace.

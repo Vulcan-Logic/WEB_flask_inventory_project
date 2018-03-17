@@ -37,6 +37,7 @@ function pageLoadAction(){
 //		submitAction();
 //	    event.preventDefault();
 //	});
+	document.getElementById("pSku").value="";
 	document.getElementById("startOverButton").disabled=true;
 	document.getElementById("finishButton").disabled=true;
 	if (select1.length>2){
@@ -63,7 +64,7 @@ function pageLoadAction(){
 		//empty type List on load
 		//no entries at level 0 also 
 		//disable the type selector
-		decativateSelectSection();
+		deactivateSelectSection();
 		//show the add types form
 		//enable the elements of the form
 		activateAddTypeSection("Add Main Type");
@@ -439,11 +440,16 @@ function addTypeAct(){
 	    	activateSelectSection();
 		}
 		else if (this.readyState == 4 && this.status == 500) {
-			displayError("divType","ERROR:in adding new type in server")
+			response=this.responseText;
+			indx1=response.indexOf("<pre>")+5;
+			indx2=response.indexOf("</pre>");
+			response=response.substr(indx1,indx2-indx1);
+			console.log(response);
+			alert(response);
 		}
 	};
 	xhttp.setRequestHeader("Content-type", 
-			               "multipart/form-data");
+			               "image/*");
 	if (catImageFileName!=null){
 		xhttp.send(catImageSrc);
 	}

@@ -11,6 +11,7 @@ import datetime
 class ProductType(ndb.Model):
     typeCode=ndb.StringProperty(required=True) #for SKU code
     typeDefinition=ndb.StringProperty(required=True) 
+    typeImageLoc=ndb.StringProperty()
     level=ndb.IntegerProperty()
     counter=ndb.IntegerProperty()
     dateModified=ndb.DateTimeProperty(auto_now=True)
@@ -56,7 +57,7 @@ class ProductTypeAttribQuery():
     
 class TypeQuery():
     
-    def addType(self,typeCode,typeDefinition,parentKey=None):
+    def addType(self,typeCode,typeDefinition,typeImageLoc,parentKey=None):
         #to do 
         # make sure that the default attributes for this type are carried 
         #on from parent to child 
@@ -71,16 +72,18 @@ class TypeQuery():
                                     counter = 0,
                                     level = parentType.level+1, 
                                     typeDefinition = typeDefinition.upper(),
+                                    typeImageLoc=typeImageLoc,
                                     parent = parentKey)
                 returnKey = typeEntry.put()
             else: 
                 return(None)
         else:
             parentKey=ndb.Key('ProductType',"0")      
-            typeEntry=ProductType(typeCode = typeCode, 
+            typeEntry=ProductType(typeCode = typeCode.upper(), 
                                 counter = 0, 
                                 level=0,
-                                typeDefinition = typeDefinition,
+                                typeDefinition = typeDefinition.upper(),
+                                typeImageLoc=typeImageLoc,
                                 parent = parentKey)
             returnKey = typeEntry.put()
         if returnKey is not None:
