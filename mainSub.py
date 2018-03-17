@@ -52,24 +52,30 @@ def gcsFunction2(request):
     modifiedBy=None  
     pFieldList=[]
     pImageList=[]
+    
+    #set images list 
+    print(pKey)
     print("files uploaded are")
+    print(request.files)
     print(len(request.files))
-    if len(request.files>0):
+    if len(request.files)>0:
         for tFile in request.files:
             fileCont=request.files[tFile]
             try:
                 filename,fileName=gcsWrite(fileCont,pSku)
             except Exception as e:
                 logging.exception(e)
-                raise
-            print("files written are")
-            print(filename)
-            print(fileName)
+                raise Exception(500, str(e))
+#            print("files written are")
+ #           print(filename)
+  #          print(fileName)
             if filename is not None: 
-                pImageEnt={"imageName":fileName,"fileLocation":filename}
+                pImageEnt={"imageName":fileName,"imageLocation":filename}
                 pImageList.append(pImageEnt)
     else:
         pImageList=None
+    
+    #set attributed repeated fields list    
     noAttr=int(noAttr)
     for ctr in range(1,noAttr+1):
         attrDesc=str(ctr)+"attrDesc"
@@ -78,12 +84,18 @@ def gcsFunction2(request):
         attrValueVal=request.form.get(attrValue)
         pFieldEnt={"fieldName":attrDescVal,"fieldValue":attrValueVal}
         pFieldList.append(pFieldEnt)
+    # try to insert    
     try:
-        addProduct.put(pKey,pName,pSku,prodDesc,pFieldList, 
-        pImageList, modifiedBy)
+        addProduct().put(pKey=pKey,
+                        pName=pName,
+                        pSku=pSku, 
+                        prodDesc=prodDesc,
+                        pFieldList=pFieldList,
+                        pImageList=pImageList, 
+                        modifiedBy=modifiedBy)
     except Exception as e:
         logging.exception(e)
-        raise Exception(500,"Server Error:" + e) 
+        raise Exception(500,str(e)) 
         
 def gcsWrite(cont,iden,cType="file",fileName=None):
     #set storage parameters and options
@@ -144,11 +156,12 @@ def gcsFunction3(request):
     typeCode=request.args.get("Code")
     typeImage=request.args.get("filename")
     data=request.data
-    print("printing data")
-    print(data)
+    print("typeImage is")
+    print(typeImage)
+    print(type(typeImage))
     iden=typeCode
     try:
-        if typeImage is not None:
+        if typeImage is not None and typeImage!="null" :
             filename,_=gcsWrite(data,iden,cType="data",
                                        fileName=typeImage)
             retList=catType().put(parentKey=parentKey,

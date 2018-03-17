@@ -338,6 +338,10 @@ function showBC(){
 		atr3.value = bcEntry.sId;
 		opt1.setAttributeNode(atr3);
 		
+		var atr4= document.createAttribute('id');
+		atr4.value = "a" + atr.value
+		opt1.setAttributeNode(atr4);
+
 		var opt2=document.createElement('span');
 		opt2.innerHTML = bcEntry.sTxt;
 		
@@ -590,6 +594,12 @@ function cancelNewTypeButtonAction(){
 
 function activateSelectSection(){
 	document.getElementById("typeSelector").disabled=false;
+	for (ctr in typeBCArray){
+		bcEntry=typeBCArray[ctr];
+		id="atypeCrumb"+bcEntry.index;
+		$("#"+id).attr("disabled",false);
+		$("#"+id).removeClass("disabled");
+	}
 }
 
 function deactivateAddTypeSection(){
@@ -600,23 +610,34 @@ function deactivateAddTypeSection(){
 
 function deactivateSelectSection(){
 	document.getElementById("typeSelector").disabled=true;
+	for (ctr in typeBCArray){
+		bcEntry=typeBCArray[ctr];
+		id="atypeCrumb"+bcEntry.index;
+		$("#"+id).attr("disabled","disabled");
+		$("#"+id).addClass("disabled");
+	}
 }
 
 function activateAddTypeSection(buttonString){
 	document.getElementById("addTypeForm").style.display="";
 	document.getElementById("typeDescription").disabled=false;
 	document.getElementById("typeCode").disabled=false;
+	resetCatForm();
 }
 
 function activateProductForm(){
-	document.getElementById("divFormProduct").classList.remove('disabled');
-	document.getElementById("divFormProduct").classList.add('enabled');
+	//document.getElementById("divFormProduct").classList.remove('disabled');
+	//document.getElementById("divFormProduct").classList.add('enabled');
+	$("#divFormProduct").removeClass("disabled");
+	$("#fieldsProduct").removeAttr("disabled");
 	resetProductForm();
 }
 
 function deactivateProductForm(){
-	document.getElementById("divFormProduct").classList.remove('enabled');
-	document.getElementById("divFormProduct").classList.add('disabled');
+	//document.getElementById("divFormProduct").classList.remove('enabled');
+	//document.getElementById("divFormProduct").classList.add('disabled');
+	$("#divFormProduct").addClass("disabled");
+	$("#fieldsProduct").attr("disabled","disabled");
 }
 
 function resetProductForm(){
@@ -704,6 +725,10 @@ function finishButtonAct() {
 				document.getElementById("fieldsProduct").disabled=false;
 				document.getElementById("pSku").value=retString;
 				setProdAttribs(attribList);
+				deactivateSelectSection();
+				$("#finishButton").attr("disabled",true);
+				$("#pName").focus();
+				$("#pKey").val(selectedId);
 		 }
 		 else if (this.readyState == 4 && this.status == 500){
 			 alert("Server Error: Unable to compute SKU");

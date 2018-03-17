@@ -29,10 +29,8 @@ def products(productPage):
                 else:
                     return(render_template("ap.html",cont=False))
             elif request.method=='POST':
-                if gcsFunction2(request):
-                    return(redirect("/products/add",code=303))
-                else:
-                    raise Exception(500,"Server Error")
+                gcsFunction2(request);
+                return(redirect("/products/add",code=303))
         elif productPage=="rqst":
             rqstType=request.args.get("type")
             fileName=request.args.get("name")
@@ -56,7 +54,7 @@ def products(productPage):
     except Exception as e:
         x,y = e.args
         if x==500:
-            abort(500)
+            abort(500,y)
         elif x==404:
             abort(404)
         else:

@@ -20,7 +20,7 @@ class addProduct():
 			print(retVal)
 		except Exception as e:
 			logging.exception(e)
-			raise Exception(500,"Server Error:Unable to insert new product") 
+			raise Exception(500,str(e)) 
 	
 class listProductsHandler(Handler1):
 	def get(self):

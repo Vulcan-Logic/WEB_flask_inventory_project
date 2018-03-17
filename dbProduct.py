@@ -6,7 +6,7 @@ import logging
 #the parent key of this should be product
 class ProductField(ndb.Model):
 	fieldName = ndb.StringProperty() #product field description
-	fieldContents=ndb.StringProperty() #product field contents
+	fieldValue=ndb.StringProperty() #product field contents
 	
 	def get(self, parentKey=None):
 		pass
@@ -57,7 +57,7 @@ class ProductQuery():
 		try:
 			baseSKU=pSku.rsplit('-',1)[0]
 			counter=TypeQuery().setTypeCounterByKey(key=pKey)
-			SKU=baseSKU+counter
+			SKU=baseSKU+str(counter)
 			parentKey=ndb.Key(urlsafe=pKey)
 			entry = (Product(pName = pName, pFields=pFieldList,\
 			pImages=pImageList,\
@@ -68,11 +68,10 @@ class ProductQuery():
 				" SKU:" +SKU)
 				return(retString)
 			else:
-				raise Exception("500",\
-				"Server Error:Uanble to Insert new product")
+				raise Exception(500, "Unable to add product to db")
 		except Exception as e:
 				logging.exception(e)
-				raise 
+				raise e
 			
 #get product details via sku or key
 	def getProduct(self,sku=None,key=None):
