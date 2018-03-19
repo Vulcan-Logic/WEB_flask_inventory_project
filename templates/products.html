@@ -19,6 +19,17 @@
 {% block content %}
 
 <h3>Product</h3>
+{ % if pgType=="type" %}
+
+{% else if  pgType=="mixed" %}
+
+{% else if pgType=="product" %}
+
+{% endif %}
+
+
+
+
 
 {% if message %}
 	<div class="row">

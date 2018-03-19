@@ -8,16 +8,60 @@ import logging
 import json
 from mainSub import *
 
-
-
 app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return(render_template("welcome.html"))
+    return(render_template("home.html"))
 
-@app.route('/products/<string:productPage>',methods=['GET', 'POST'])
-def products(productPage):
+@app.route('/about')
+def about():
+    return(render_template("about.html"))
+
+@app.route('/contact')
+def contact():
+    return(render_template("contact.html"))
+
+@app.route('/info')
+def info():
+    return(render_template("info.html"))
+
+@app.route('/products/<string:pageType>')
+def products(pageType):
+    typeResults=None
+    productResults=None
+    if pageType=="":
+        try:
+            typeResults,_=getTypes(level=0,key=0)
+            return(render_template("products.html", pgType="type",
+                                   types=typeResults))
+        except Exception as e:
+            pass
+    elif pageType=="type":
+        try:
+            key=request.args.get("key")    
+            level=request.args.get("level")
+            typeResults,productResults=getTypes(level=level,key=key)
+            return(render_template("products.html",types=typeResults,
+                        pgType="mixed",products=productResults))
+        except Exception as e:
+            pass
+    elif pageType=="product":
+        try:
+            key=request.args.get("key")
+            productResult=getProduct(key)
+            return(render_template("products.html",types=typeResults,
+                        pgType="product",product=productResult))
+        except Exception as e:
+            pass
+
+
+@app.route('/admin')
+def admin():
+    return(render_template("admin.html"))
+
+@app.route('/admin/products/<string:productPage>',methods=['GET', 'POST'])
+def adminProducts(productPage):
     try:
         if productPage=="add":
             if request.method=='GET':
@@ -31,24 +75,8 @@ def products(productPage):
             elif request.method=='POST':
                 gcsFunction2(request);
                 return(redirect("/products/add",code=303))
-        elif productPage=="rqst":
-            rqstType=request.args.get("type")
-            fileName=request.args.get("name")
-            data=request.data
-            if rqstType=="storageTest":
-                gcsFunction1(fileName,data)
-                response=make_response("OK") 
-                #response.headers['Content-Type'] = 'text/json'
-                response.status_code = 200
-                return(response)
-            elif rqstType=="chkSt":
-                print("in chkst")
-                print(request.form)
-                return("OK")
         elif productPage=="list":
             return("listHandler")
-        elif productPage=="sku":
-            return("skuHandler")
         else:
             abort(404)
     except Exception as e:
@@ -61,7 +89,7 @@ def products(productPage):
             server_error(e)
 
     
-@app.route('/types/<string:typePage>',methods=['GET','POST'])
+@app.route('/admin/types/<string:typePage>',methods=['GET','POST'])
 def types(typePage):
     catT=catType()
     try:

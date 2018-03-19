@@ -22,7 +22,6 @@ def gcsFunction1(fileName=None,data=None):
     bucket = '/' + bucket_name
     filename = bucket + '/'+fileName
     content_t=mimetypes.guess_type(data)
-    print(content_t)
     write_retry_params = gcs.RetryParams(backoff_factor=1.1)
     try:
         gcs_file = gcs.open(filename,
@@ -52,29 +51,18 @@ def gcsFunction2(request):
     modifiedBy=None  
     pFieldList=[]
     pImageList=[]
-    
     #set images list 
-    print(pKey)
-    print("files uploaded are")
-    print(request.files)
-    print(len(request.files))
-    if len(request.files)>0:
-        for tFile in request.files:
-            fileCont=request.files[tFile]
+    for tFile in request.files:
+        fileCont=request.files[tFile]
+        if fileCont.filename!='':
             try:
                 filename,fileName=gcsWrite(fileCont,pSku)
             except Exception as e:
                 logging.exception(e)
                 raise Exception(500, str(e))
-#            print("files written are")
- #           print(filename)
-  #          print(fileName)
             if filename is not None: 
                 pImageEnt={"imageName":fileName,"imageLocation":filename}
                 pImageList.append(pImageEnt)
-    else:
-        pImageList=None
-    
     #set attributed repeated fields list    
     noAttr=int(noAttr)
     for ctr in range(1,noAttr+1):
@@ -156,9 +144,6 @@ def gcsFunction3(request):
     typeCode=request.args.get("Code")
     typeImage=request.args.get("filename")
     data=request.data
-    print("typeImage is")
-    print(typeImage)
-    print(type(typeImage))
     iden=typeCode
     try:
         if typeImage is not None and typeImage!="null" :
@@ -178,7 +163,11 @@ def gcsFunction3(request):
         raise Exception(500,str(e)) 
     
     
-    
-    
+def getTypes(type=None,level=None,key=None):
+    pass
+
+def getProduct(key=None, parentKey=None):
+    pass
+
     
         
